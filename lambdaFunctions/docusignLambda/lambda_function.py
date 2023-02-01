@@ -24,9 +24,6 @@ def lambda_handler(event, context):
 
         Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
-    
-    with open("../events/event.json", "w") as file:
-        file.write(event)
 
     # try:
     #     ip = requests.get("http://checkip.amazonaws.com/")
