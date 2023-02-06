@@ -1,1 +1,7 @@
-credentials.json
+service_account.json
+
+# build folder for running lambda locally
+.aws-sam
+
+# python packages for lambda upload
+package
