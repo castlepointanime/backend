@@ -5,3 +5,5 @@ service_account.json
 
 # python packages for lambda upload
 package
+
+credentials.json

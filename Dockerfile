@@ -8,7 +8,7 @@ RUN pip install -r requirements.txt
 
 # copy all content from the local file to the image
 COPY . /app
-
+ 
 # switch working directory
 WORKDIR /app
 
