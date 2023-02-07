@@ -17,6 +17,6 @@ def main():
         approver_email="kevtaco123@gmail.com"
     )
     
-    Docusign.create_contract(data)
+    print(Docusign.create_contract(data))
     
 main()

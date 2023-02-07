@@ -51,7 +51,7 @@ class Docusign:
             print(consent_url)
             consent_granted = input("Consent granted? Select one of the following: \n 1)Yes \n 2)No \n")
             if consent_granted == "1":
-                callback(api_client, private_key, contract_data)
+                return callback(api_client, private_key, contract_data)
             else:
                 sys.exit("Please grant consent")
         else:
@@ -68,7 +68,7 @@ class Docusign:
         envelope_id = Contract(access_token, base_path, account_id).make_contract(contract_data)
         
         print("Your envelope has been sent.")
-        print(envelope_id)
+        return envelope_id
     
     @classmethod
     def _auth(cls):
@@ -84,7 +84,7 @@ class Docusign:
     def create_contract(cls, contract_data: ContractData):
         api_client, private_key = cls._auth()
         try:
-            cls._run(api_client, private_key, contract_data)
+            return cls._run(api_client, private_key, contract_data)
         except ApiException as err:
-            cls._handle_consent(err, cls._run, api_client, private_key, contract_data)
+            return cls._handle_consent(err, cls._run, api_client, private_key, contract_data)
         
