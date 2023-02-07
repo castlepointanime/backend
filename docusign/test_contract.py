@@ -3,8 +3,7 @@ from ContractData import ContractData
 
 def main():
     data = ContractData(
-        month="January",
-        email="kh220kh@gmail.com",
+        month="January", 
         helper_badge_qt=2,
         additional_chairs_qt=4,
         artist_number=1234567890,
