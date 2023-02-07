@@ -6,7 +6,6 @@ class ContractData:
     def __init__(
         self,
         month: str,
-        email: str,
         helper_badge_qt: int,
         additional_chairs_qt: int,
         artist_number: int,
@@ -20,7 +19,6 @@ class ContractData:
         ):
         
         self.month=month
-        self.email=email
         self.helper_badge_qt=helper_badge_qt
         self.additional_chairs_qt=additional_chairs_qt
         self.artist_number=artist_number
@@ -38,7 +36,7 @@ class ContractData:
             template_id=CONTRACT_TEMPLATE_ID
         )
         
-        envelope_keys=["month", "email", 
+        envelope_keys=["month", 
                        "helper_badge_qt", "additional_chairs_qt", "artist_number",
                        "helper1_number", "shortened_year", "day"]
         envelope_args = {
@@ -52,6 +50,7 @@ class ContractData:
             elif type(getattr(self, key)) == int:
                 envelope_args["number"].append(Number(tab_label=key, value=getattr(self,key)))
                 
+        envelope_args["text"].append(Text(tab_label="email", value=self.signer_email))
         envelope_args["text"].append(Text(tab_label="name", value=self.signer_name))
 
         signer = TemplateRole(
