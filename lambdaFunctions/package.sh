@@ -7,13 +7,13 @@ if [ "$#" != "1" ]; then
     exit 1
 fi
 directory=$1
-rm -rf package
-mkdir package
-cp -r ./${directory} ./package 
+
+cd $directory
+rm -rf package deployment.zip .aws-sam
+zip -r deployment.zip .
+pip install -r requirements.txt --target ./package
 cd package
-pip install -r $directory/requirements.txt --target ${directory}
-zip -r deployment.zip docusignLambda
-mv deployment.zip ../
+zip -r ../deployment.zip .
 cd ..
 chmod 755 deployment.zip
 rm -rf package
