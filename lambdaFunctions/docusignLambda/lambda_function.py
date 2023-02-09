@@ -1,5 +1,7 @@
 from Docusign import Docusign
 from GoogleDrive import GoogleDrive
+import logging
+import json
 
 def lambda_handler(event, context):
     try:
@@ -9,7 +11,7 @@ def lambda_handler(event, context):
                 "status": 400,
                 "body": "Envelope is not completed."
             }
-            print(result)
+            logging.error("Failed to execute docusign function: docusign is not complete.")
             return result
         api : GoogleDrive = GoogleDrive()
         file_id = api.resumable_upload_to_drive(document.data, document.file_name, document.file_mimetype, is_base64=document.is_base64)
@@ -27,10 +29,10 @@ def lambda_handler(event, context):
             "document_name": document.document_name,
             "file_name": document.file_name
         }
-        print(result)
+        logging.debug(f"Successfully uploaded to google drive: {json.dumps(result)}")
         return result
     except Exception as e:
-        print(str(e))
+        logging.error(f"Internal Server Error: '{str(e)}'")
         return {
             "status": 500,
             "body": str(e)
