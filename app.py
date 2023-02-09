@@ -10,6 +10,6 @@ CORS(app)
 def main():
     return jsonify(datetime.now())
 
-@app.route('/createContract', methods=['POST'])
+@app.route('/contract', methods=['POST'])
 def create_contract_route():
     return create_contract(request)
