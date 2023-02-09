@@ -1,18 +1,15 @@
 FROM python:3.10-slim-bullseye
 
-RUN apt update
-RUN apt install -y \
-    curl \
-    unzip \
-    git \
-    zip \
-    make
+# copy the requirements file into the image
+COPY requirements.txt .
 
-#Install aws
-RUN curl --create-dirs -O --output-dir /tmp "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
-    unzip /tmp/awscli-exe-linux-x86_64.zip -d /tmp && \
-    /tmp/aws/install --bin-dir /bin --install-dir /aws-cli
+# install the dependencies and packages in the requirements file
+RUN make
+# copy all content from the local file to the image
+COPY . /app
+ 
+# switch working directory
+WORKDIR /app
 
-RUN pip install aws-sam-cli
-
-RUN git config --global --add safe.directory /portal/backend
+# run the container with gunicorn (production ready) on port 3001 with hot reloading
+CMD make run
