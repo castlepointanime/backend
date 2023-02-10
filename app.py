@@ -12,15 +12,12 @@ app.config.update({
     'COGNITO_APP_CLIENT_ID': COGNITO_APP_CLIENT_ID,
 
     # optional
-
-    'COGNITO_CHECK_TOKEN_EXPIRATION': True,
-    'COGNITO_JWT_HEADER_NAME': 'X-MyApp-Authorization',
-    'COGNITO_JWT_HEADER_PREFIX': 'Bearer',
+    'COGNITO_CHECK_TOKEN_EXPIRATION': True
 })
 
 cogauth = CognitoAuth(app)
 cogauth.init_app(app)
-#CORS(app)
+CORS(app)
 
 @app.route('/')
 def main():
@@ -29,15 +26,14 @@ def main():
 @cogauth.identity_handler
 def lookup_cognito_user(payload):
     """Look up user in our database from Cognito JWT payload."""
-    return User.query.filter(User.cognito_username == payload['username']).one_or_none()
+    return payload['username'] #TODO check with mongoDB. Should return the object of user information
 
 @app.route('/test/userAuth')
 @cognito_auth_required
-@cognito_group_permissions(['User'])
 def test_user_auth():
     return jsonify({
-        'cognito_username': current_cognito_jwt['username'],   # from cognito pool
-        'user_id': current_user.id,   # from your database
+        'cognito_username': str(current_cognito_jwt['username']),   # from cognito pool
+        'user_id': str(current_user),   # from your database
     })
     
 @app.route('/test/adminAuth')
@@ -45,16 +41,16 @@ def test_user_auth():
 @cognito_group_permissions(['Admin'])
 def test_admin_auth():
     return jsonify({
-        'cognito_username': current_cognito_jwt['username'],   # from cognito pool
-        'user_id': current_user.id,   # from your database
+        'cognito_username': str(current_cognito_jwt['username']),   # from cognito pool
+        'user_id': str(current_user),   # from your database
     })
     
 @app.route('/test/staffAuth')
 @cognito_auth_required
-@cognito_group_permissions(['Staff'])
+@cognito_group_permissions(['Staff', 'Admin'])
 def test_staff_auth():
     return jsonify({
-        'cognito_username': current_cognito_jwt['username'],   # from cognito pool
-        'user_id': current_user.id,   # from your database
+        'cognito_username': str(current_cognito_jwt['username']),   # from cognito pool
+        'user_id': str(current_user),   # from your database
     })
     
