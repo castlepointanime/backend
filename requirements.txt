@@ -1,7 +1,7 @@
 certifi==2022.12.7
 cffi==1.15.1
 click==8.1.3
-cryptography==39.0.1
+cryptography==39.0.0
 docusign-esign==3.19.0
 Flask==2.2.2
 Flask-Cors==3.0.10
@@ -17,3 +17,4 @@ python-dotenv==0.21.1
 six==1.16.0
 urllib3==1.26.14
 Werkzeug==2.2.2
+Flask-Cognito==1.18
