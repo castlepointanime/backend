@@ -3,13 +3,17 @@ FROM python:3.10-slim-bullseye
 # copy the requirements file into the image
 COPY requirements.txt .
 
-# install the dependencies and packages in the requirements file
-RUN make
 # copy all content from the local file to the image
 COPY . /app
  
 # switch working directory
 WORKDIR /app
+
+# install make
+RUN apt-get update && apt-get install make
+
+# install the dependencies and packages in the requirements file
+RUN make
 
 # run the container with gunicorn (production ready) on port 3001 with hot reloading
 CMD make run
