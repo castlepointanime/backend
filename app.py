@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from datetime import datetime
 from create_contract import create_contract
+import logging
 
 app = Flask(__name__)
 CORS(app)
