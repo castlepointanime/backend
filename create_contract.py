@@ -22,6 +22,7 @@ def create_contract(request):
     
     # check if contractType is valid
     if content['contractType'] not in validcontracts:
+        #TODO: if the check is dealer, return a "NOT IMPLEMENTED YET" error (501) | temporary
         return {'error': "missing or invalid 'contractType' field"}, 400
 
     # check if month is valid
