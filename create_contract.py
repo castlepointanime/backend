@@ -11,10 +11,10 @@ validKeys = ['contractType', 'month', 'helperBadgeQt', 'additionalChairsQt', 'ar
 
 
 def is_valid_date(year, month, day):
-    day_count_for_month = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    day_count_for_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     if year%4==0 and (year%100 != 0 or year%400==0):
         day_count_for_month[2] = 29
-    return (1 <= month <= 12 and 1 <= day <= day_count_for_month[month])
+    return (0 <= month <= 11 and 1 <= day <= day_count_for_month[month])
  
 # Make a regular expression
 # for validating an Email
@@ -72,7 +72,7 @@ def create_contract(request):
     # date validation
     year = 2000 + content['shortenedYear'] # TODO: change in 2100 :)
     day = content['day']
-    month = validmonths.index[content['month']] + 1
+    month = validmonths.index[content['month']]
     if (not is_valid_date(year, month, day)):
         return {'error': "invalid date"}, 400
 
