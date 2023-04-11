@@ -21,4 +21,4 @@ def get():
 @me.route('/me', methods=["PATCH"])
 @cognito_auth_required
 def patch():
-    return "TODO", 501
+    return "TODO", 501 # TODO integrate with mongodb
