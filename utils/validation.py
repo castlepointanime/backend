@@ -1,4 +1,4 @@
-
+from flask import jsonify
 from flask_cognito import cognito_auth_required, current_user, current_cognito_jwt, cognito_group_permissions
 
 def verify_id_token():

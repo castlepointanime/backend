@@ -23,6 +23,8 @@ CORS(app)
 @cogauth.identity_handler
 def lookup_cognito_user(payload):
     """Look up user in our database from Cognito JWT payload."""
+    if "cognito:username" in payload:
+        return payload['cognito:username']
     return payload['username'] #TODO check with mongoDB. Should return the object of user information
 
 app.register_blueprint(health)

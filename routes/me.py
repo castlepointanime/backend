@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 from flask_cognito import  cognito_auth_required, current_user, current_cognito_jwt, cognito_group_permissions
 from flask import current_app
-from validation import verify_id_token
+from utils import verify_id_token
 
 me = Blueprint('me', __name__)
 
