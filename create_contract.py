@@ -1,5 +1,7 @@
 import logging
 import re
+from Docusign import Docusign
+from ContractData import ContractData
 
 validcontracts = ["artist", "dealer"]
 
@@ -7,7 +9,7 @@ validmonths = ['January', 'Feburary', 'March', 'April', 'May','June',\
     'July', 'August', 'September', 'October', 'November', 'December']
 
 validKeys = ['contractType', 'month', 'helperBadgeQt', 'additionalChairsQt', 'artistNumber', \
-    'shortenedYear', 'day', 'signerName', 'signerEmail', 'approverName', 'approverEmail']
+    'shortenedYear', 'day', 'signerName', 'approverName', 'approverEmail']
 
 
 def is_valid_date(year, month, day):
@@ -20,14 +22,21 @@ def is_valid_date(year, month, day):
 # for validating an Email
 regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
 def check_email(email):
- 
     # pass the regular expression
     # and the string into the fullmatch() method
     if(re.fullmatch(regex, email)):
         return True
- 
     else:
         return False
+
+def check_phoneNumber(phone_number):
+    if type(phone_number) != int:
+        return False
+    if phone_number < 0:
+        return False
+    if phone_number > 9999999999:
+        return False
+    return True
 
 def create_contract(request):
     
@@ -54,11 +63,11 @@ def create_contract(request):
         return {'error': "missing or invalid 'month' field"}, 400
     
     # check if helperBadgeQt is valid
-    if type(content['helperBadgeQt']) != int or content['helperBadgeQt'] < 0:
+    if type(content['helperBadgeQt']) != int or content['helperBadgeQt'] < 0 or content['helperBadgeQt'] > 3:
         return {'error': "missing or invalid 'helperBadgeQt' field"}, 400
     
     # check if additionalChairsQt is valid
-    if type(content['additionalChairsQt']) != int or content['additionalChairsQt'] < 0:
+    if type(content['additionalChairsQt']) != int or content['additionalChairsQt'] < 0 or content['additionalChairsQt'] > 2:
         return {'error': "missing or invalid 'additionalChairsQt' field"}, 400
     
     # check if day is valid
@@ -88,12 +97,38 @@ def create_contract(request):
     if type(content['approverEmail']) != str or check_email(content['approverEmail']):
         return {'error': "missing or invalid 'approverEmail' field"}, 400 
 
-    content['additionalChairsQt']
-    content['helperBadgeQt']
+    if not check_phoneNumber(content['artistNumber']):
+        return {'error': "missing or invalid 'artistNumber' field"}, 400 
     
+    for i in range(content['helperBadgeQt']):
+        if(not check_phoneNumber(content.get(f'helper{i+1}Number'))):
+            return {'error': f"missing or invalid 'helper{i+1}Number' field"}, 400
+        if(type(content.get(f'helper{i+1}Name')) != str):
+            return {'error': f"missing or invalid 'helper{i+1}Name' field"}, 400
 
-    logging.warn(request.get_json(force=True)['contentType'])
+    #logging.warn(request.get_json(force=True)['contentType'])
     
-
+    try:
+        data = ContractData(
+            month=content['month'],
+            email=content['email'],
+            helper_badge_qt=content['helperBadgeQt'],
+            additional_chairs_qt=content['additionalChairsQt'],
+            helper1_name=content.get('helper1Name'),
+            helper1_number=content.get('helper1Number'),
+            helper2_name=content.get('helper2Name'),
+            helper2_number=content.get('helper2Number'),
+            helper3_name=content.get('helper3Name'),
+            helper3_number=content.get('helper3Number'),
+            shortened_year=content['shortenedYear'],
+            day=content['day'],
+            signer_name=content['signerName'],
+            aprover_name=content['approverName'],
+            aprover_email=content['approverEmail']
+        )
+        
+        return {'contractId': data}, 200
+    except Exception as e:
+        logging.warn(e)
+        return {'error': "Oopsie woopsie, the docusign function broke :3"}, 400
     
-    return {'error': "NOT IMPLEMENTED YET"}, 500 #TODO
