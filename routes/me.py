@@ -8,7 +8,10 @@ me = Blueprint('me', __name__)
 @me.route('/me', methods=["GET"])
 @cognito_auth_required
 def get():
-    verify_id_token()
+
+    error = verify_id_token()
+    if (error):
+        return error
 
     return jsonify({
         'name': str(current_user),
@@ -18,4 +21,4 @@ def get():
 @me.route('/me', methods=["PATCH"])
 @cognito_auth_required
 def patch():
-    return "ok"
+    return "TODO", 501
