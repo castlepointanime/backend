@@ -6,6 +6,7 @@ from docusign_esign.client.api_exception import ApiException
 from jwt_config import get_jwt_token
 from ds_config import DS_JWT
 from env import DOCUSIGN_PRIVATE_KEY
+import logging
 
 SCOPES = [
     "signature", "impersonation"
@@ -35,10 +36,7 @@ class Docusign:
         user_info = api_client.get_user_info(access_token)
         accounts = user_info.get_accounts()
         api_account_id = accounts[0].account_id
-        print(api_account_id)
         base_path = accounts[0].base_uri + "/restapi"
-
-        print(base_path)
         return {"access_token": access_token, "api_account_id": api_account_id, "base_path": base_path}
 
     @classmethod
@@ -47,15 +45,15 @@ class Docusign:
 
         if "consent_required" in body:
             consent_url = cls._get_consent_url()
-            print("Open the following URL in your browser to grant consent to the application:")
-            print(consent_url)
+            logging.warn("Open the following URL in your browser to grant consent to the application:")
+            logging.warn(consent_url)
             consent_granted = input("Consent granted? Select one of the following: \n 1)Yes \n 2)No \n")
             if consent_granted == "1":
                 return callback(api_client, private_key, contract_data)
             else:
                 sys.exit("Please grant consent")
         else:
-            print(body)
+            logging.info(body)
             
     @classmethod
     def _run(cls, api_client, private_key: str, contract_data: ContractData):
@@ -67,7 +65,7 @@ class Docusign:
         
         envelope_id = Contract(access_token, base_path, account_id).make_contract(contract_data)
         
-        print("Your envelope has been sent.")
+        logging.info("Your envelope has been sent.")
         return envelope_id
     
     @classmethod

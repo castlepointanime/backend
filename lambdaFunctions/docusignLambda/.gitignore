@@ -7,3 +7,6 @@ service_account.json
 package
 
 credentials.json
+
+# lambda zip file to be uploaded
+deployment.zip
