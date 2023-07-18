@@ -1,3 +1,2 @@
-from validation import Validation
-from flask_errors import FlaskErrors
-from flask_errors import FLASK_ERROR_TYPE
+from .validation import Validation
+from .flask_errors import FlaskErrors, FLASK_ERROR_TYPE

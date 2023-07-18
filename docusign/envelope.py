@@ -1,8 +1,8 @@
-from ContractData import ContractData
-from ds_config import DS_JWT
+from .contract_data import ContractData
+from .ds_config import DS_JWT
 from docusign_esign import EnvelopesApi, EnvelopeDefinition, TemplateRole, Tabs, Text, Number
-from jwt_config import create_api_client
-from env import CONTRACT_TEMPLATE_ID
+from .jwt_config import create_api_client
+from .env import CONTRACT_TEMPLATE_ID
 
 class Contract:
     

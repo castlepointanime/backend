@@ -1,11 +1,10 @@
-from validation import Validation
 from helpers import Validation, FlaskErrors
 from typing import Optional, Dict
 
 class BaseRequest:
 
     validation = Validation()
-    content : Optional[Dict, None] = None 
+    content : Optional[Dict] = None 
     errors = FlaskErrors()
     
     def generate_request_content(self, request) -> bool:

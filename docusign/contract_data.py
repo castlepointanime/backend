@@ -1,5 +1,5 @@
 from docusign_esign import EnvelopeDefinition, TemplateRole, Tabs, Text, Number
-from env import CONTRACT_TEMPLATE_ID
+from .env import CONTRACT_TEMPLATE_ID
 
 class ContractData:
     

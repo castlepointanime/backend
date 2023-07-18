@@ -3,7 +3,7 @@ import calendar
 
 EMAIL_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
 DATE_FORMAT_STRING = "%Y-%m-%d"
-CONTRACT_TYPES + ['artist', 'dealer']
+CONTRACT_TYPES = ['artist', 'dealer']
 VALID_MONTH_NAMES : List[str] = calendar.month_name[1:] # index 0 is an empty string
 
 class Validation:

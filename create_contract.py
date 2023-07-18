@@ -1,7 +1,6 @@
 import logging
 import re
-from Docusign import Docusign
-from ContractData import ContractData
+from docusign import Docusign, ContractData
 
 validcontracts = ["artist", "dealer"]
 

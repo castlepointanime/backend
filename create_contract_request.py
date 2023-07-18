@@ -1,19 +1,19 @@
 import logging
 import re
-from Docusign import Docusign
-from ContractData import ContractData
+from docusign import Docusign, ContractData
 from base_request import BaseRequest
 from helpers import FLASK_ERROR_TYPE
+from typing import Optional
 
 REQUIRED_KEYS = ['contractType', 'month', 'helperBadgeQt', 'additionalChairsQt', 'artistNumber', \
-    'shortenedYear', 'day', 'signerName', 'approverName', 'approverEmail']
+    'shortenedYear', 'day', 'signerName', 'approverName', 'approverEmail'] #TODO not all of these are required
 
 class CreateContractRequest(BaseRequest):
     """
     TODO add docstring of the API route, explaining each key and an example API call
     """
 
-    def _verify_valid_request(self) -> Optional[None, FLASK_ERROR_TYPE]:
+    def _verify_valid_request(self) -> Optional[FLASK_ERROR_TYPE]:
         # Returns data if there was an error. If request is valid, returns None
 
         # check if content contains all required keys
@@ -75,7 +75,7 @@ class CreateContractRequest(BaseRequest):
 
     def create_contract(self, request):
 
-        if not self.generate_request_content():
+        if not self.generate_request_content(request):
             return self.errors.request_not_json_error()
     
         error = self._verify_valid_request()
@@ -101,8 +101,10 @@ class CreateContractRequest(BaseRequest):
                 aprover_name=self.content['approverName'],
                 aprover_email=self.content['approverEmail']
             )
+
+            docusign = Docusign()
             
-            return {'contractId': data.generate_envelope()}, 200
+            return {'contractId': docusign.create_contract(data)}, 200
         except Exception as e:
             logging.warn(e)
             return {'error': "Oopsie woopsie, the docusign function broke :3"}, 500

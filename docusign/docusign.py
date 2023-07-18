@@ -1,11 +1,11 @@
 import sys, os
-from envelope import Contract
-from ContractData import ContractData
+from .envelope import Contract
+from docusign import ContractData
 from docusign_esign import ApiClient
 from docusign_esign.client.api_exception import ApiException
-from jwt_config import get_jwt_token
-from ds_config import DS_JWT
-from env import DOCUSIGN_PRIVATE_KEY
+from .jwt_config import get_jwt_token
+from .ds_config import DS_JWT
+from .env import DOCUSIGN_PRIVATE_KEY
 import logging
 
 SCOPES = [

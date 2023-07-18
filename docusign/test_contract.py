@@ -1,5 +1,6 @@
-from Docusign import Docusign
-from ContractData import ContractData
+from .contract_data import ContractData
+from .docusign import Docusign
+
 
 def main():
     data = ContractData(

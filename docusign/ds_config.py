@@ -1,7 +1,7 @@
 # ds_config.py
 #
 # DocuSign configuration settings
-from env import DOCUSIGN_CLIENT_ID, DOCUSIGN_IMPERSONATED_USER_ID
+from .env import DOCUSIGN_CLIENT_ID, DOCUSIGN_IMPERSONATED_USER_ID
 
 DS_JWT = {
     "ds_client_id": DOCUSIGN_CLIENT_ID,
