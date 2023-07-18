@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from datetime import datetime
-from create_contract import create_contract
+from create_contract_request import CreateContractRequest
 import logging
 
 app = Flask(__name__)
@@ -13,4 +13,4 @@ def main():
 
 @app.route('/contract', methods=['POST'])
 def create_contract_route():
-    return create_contract(request)
+    return CreateContractRequest().create_contract(request)
