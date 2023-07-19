@@ -1,5 +1,6 @@
 from docusign_esign import EnvelopeDefinition, TemplateRole, Tabs, Text, Number
 from .env import CONTRACT_TEMPLATE_ID
+from typing import Optional
 
 class ContractData:
     
@@ -9,7 +10,12 @@ class ContractData:
         helper_badge_qt: int,
         additional_chairs_qt: int,
         artist_number: int,
-        helper1_number: int,
+        helper1_name : Optional[str],
+        helper1_number: Optional[int],
+        helper2_name: Optional[str],
+        helper2_number: Optional[int],
+        helper3_name : Optional[str],
+        helper3_number: Optional[int],
         shortened_year: int,
         day: int,
         signer_name: str,
@@ -29,6 +35,12 @@ class ContractData:
         self.signer_email=signer_email
         self.approver_name=approver_name
         self.approver_email=approver_email
+        self.helper1_name=helper1_name
+        self.helper1_number=helper1_name
+        self.helper2_name=helper2_name
+        self.helper2_number=helper2_number
+        self.helper3_name=helper3_name
+        self.helper3_number=helper3_number
         
     def generate_envelope(self):
         env = EnvelopeDefinition(
@@ -37,17 +49,17 @@ class ContractData:
         )
         
         envelope_keys=["month", 
-                       "helper_badge_qt", "additional_chairs_qt", "artist_number",
-                       "helper1_number", "shortened_year", "day"]
+                       "helper_badge_qt", "additional_chairs_qt", "artist_number", "helper1_name",
+                       "helper1_number", "helper2_name", "helper2_number", "helper3_name", "helper3_number", "shortened_year", "day"]
         envelope_args = {
             "text": list(),
             "number": list()
         }
         
         for key in envelope_keys:
-            if type(getattr(self, key)) == str:
+            if type(getattr(self, key, None)) == str:
                 envelope_args["text"].append(Text(tab_label=key, value=getattr(self, key)))
-            elif type(getattr(self, key)) == int:
+            elif type(getattr(self, key, None)) == int:
                 envelope_args["number"].append(Number(tab_label=key, value=getattr(self,key)))
                 
         envelope_args["text"].append(Text(tab_label="email", value=self.signer_email))

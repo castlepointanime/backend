@@ -3,15 +3,23 @@ import re
 from docusign import Docusign, ContractData
 from base_request import BaseRequest
 from helpers import FLASK_ERROR_TYPE
-from typing import Optional
+from typing import Optional, List, Dict
+import datetime
 
-REQUIRED_KEYS = ['contractType', 'month', 'helperBadgeQt', 'additionalChairsQt', 'artistNumber', \
-    'shortenedYear', 'day', 'signerName', 'approverName', 'approverEmail'] #TODO not all of these are required
+REQUIRED_KEYS = ['contractType', 'helperBadgeQt', 'additionalChairsQt', 'artistNumber', \
+    'signerName', 'email']
+
+OPTIONAL_KEYS = ['helpers']
+
+MAX_HELPERS = 3
 
 class CreateContractRequest(BaseRequest):
     """
     TODO add docstring of the API route, explaining each key and an example API call
     """
+
+    def __init__(self):
+        self._helpers : List[Dict] = [{}] * MAX_HELPERS
 
     def _verify_valid_request(self) -> Optional[FLASK_ERROR_TYPE]:
         # Returns data if there was an error. If request is valid, returns None
@@ -19,7 +27,7 @@ class CreateContractRequest(BaseRequest):
         # check if content contains all required keys
         for key in REQUIRED_KEYS:
             if key not in self.content.keys():
-                return self.errors.missing_key_field(key)
+                return self.errors.missing_or_invalid_field(key)
 
         if not self.validation.is_valid_contract_type(self.content['contractType']):
             return self.errors.missing_or_invalid_field('contractType')
@@ -28,20 +36,11 @@ class CreateContractRequest(BaseRequest):
         if self.content['contractType'] == "dealer":
             return self.errors.not_implemented_yet()
 
-        if not self.validation.is_valid_month_name(self.content['month']):
-            return self.errors.missing_or_invalid_field('month')
-        
         if not self.validation.is_valid_helper_badge_quantity(self.content['helperBadgeQt']):
             return self.errors.missing_or_invalid_field('helperBadgeQt')
 
         if not self.validation.is_valid_additional_chairs_quantity(self.content['additionalChairsQt']):
             return self.errors.missing_or_invalid_field('additionalChairsQt')
-
-        year = self.content['shortenedYear']
-        day = self.content['day']
-        month = self.content['month']
-        if (not self.validation.is_valid_date(year, month, day)):
-            return self.errors.invalid_date()
 
         if type(self.content['signerName']) != str:
             return self.errors.missing_or_invalid_field('signerName')
@@ -58,18 +57,22 @@ class CreateContractRequest(BaseRequest):
         if not self.validation.is_valid_phone_number(self.content['artistNumber']):
             return self.errors.missing_or_invalid_field('artistNumber')
         
-        for i in range(self.content['helperBadgeQt']):
+        if self.content.get('helpers'):
+            self._helpers = [{}] * MAX_HELPERS
+            for helper in self.content['helpers']:
 
-            # Generate keys dynamically
-            helper_key= f"helper{i+1}Number"
-            helper_name_key = f"{helper_key}Number"
-            helper_number_key = f"{helper_key}Name"
+                # Error check
+                helper_number = helper.get('number')
+                if(not self.validation.is_valid_phone_number(helper_number)):
+                    self._helpers = [{}] * MAX_HELPERS
+                    return self.errors.missing_or_invalid_field('helper number')
+                
+                helper_name = helper.get('name')
+                if(type(helper_name) != str):
+                    self._helpers = [{}] * MAX_HELPERS
+                    return self.errors.missing_or_invalid_field('helper name')
 
-            # Error check
-            if(not self.validation.is_valid_phone_number(self.content.get(helper_number_key))):
-                return self.errors.missing_or_invalid_field(helper_number_key)
-            if(type(self.content.get(helper_name_key)) != str):
-                return self.errors.missing_or_invalid_field(helper_name_key)
+                self._helpers.append({'number': helper_number, 'name': helper_name})
 
         return None # validation was successful. No error will be returned
 
@@ -82,24 +85,34 @@ class CreateContractRequest(BaseRequest):
         if error:
             logging.warn(error)
             return error
+
+        current_date = datetime.datetime.now()
+        day = int(current_date.strftime('%d'))
+        month = current_date.strftime('%B')
+        shortened_year = int(current_date.strftime('%Y')[2:])
+
+        # TODO randomly select admin from DB and assign as approver.
+        approver_email = "TEST@gmail.com"
+        approver_name = "test"
         
         try:
             data = ContractData(
-                month=self.content['month'],
-                email=self.content['email'],
+                month=month,
+                signer_email=self.content['email'],
                 helper_badge_qt=self.content['helperBadgeQt'],
                 additional_chairs_qt=self.content['additionalChairsQt'],
-                helper1_name=self.content.get('helper1Name'),
-                helper1_number=self.content.get('helper1Number'),
-                helper2_name=self.content.get('helper2Name'),
-                helper2_number=self.content.get('helper2Number'),
-                helper3_name=self.content.get('helper3Name'),
-                helper3_number=self.content.get('helper3Number'),
-                shortened_year=self.content['shortenedYear'],
-                day=self.content['day'],
+                artist_number=self.content['artistNumber'],
+                helper1_name=self._helpers[0].get('name'),
+                helper1_number=self._helpers[0].get('number'),
+                helper2_name=self._helpers[1].get('name'),
+                helper2_number=self._helpers[1].get('number'),
+                helper3_name=self._helpers[2].get('name'),
+                helper3_number=self._helpers[2].get('number'),
+                shortened_year=shortened_year,
+                day=day,
                 signer_name=self.content['signerName'],
-                aprover_name=self.content['approverName'],
-                aprover_email=self.content['approverEmail']
+                approver_name=approver_name,
+                approver_email=approver_email,
             )
 
             docusign = Docusign()

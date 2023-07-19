@@ -15,7 +15,3 @@ class FlaskErrors:
     @classmethod
     def not_implemented_yet(cls) -> FLASK_ERROR_TYPE:
         return {'error': "not implemented yet"}, 501
-
-    @classmethod
-    def invalid_date(cls) -> FLASK_ERROR_TYPE:
-        return {'error': "invalid date"}, 400
