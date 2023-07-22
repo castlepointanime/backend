@@ -1,16 +1,15 @@
-from flask import Flask, jsonify, request
+from flask import Flask
 from flask_cors import CORS
-from datetime import datetime
-from create_contract_request import CreateContractRequest
-import logging
+from flasgger import Swagger
+from controllers import ContractController
+from flask_restful import Api
 
 app = Flask(__name__)
 CORS(app)
+Swagger(app)
+api = Api(app)
 
-@app.route('/')
-def main():
-    return jsonify(datetime.now())
-
-@app.route('/contract', methods=['POST'])
-def create_contract_route():
-    return CreateContractRequest().create_contract(request)
+api.add_resource(ContractController, '/contract')
+    
+if __name__ == "__main__":
+    app.run(debug=True)

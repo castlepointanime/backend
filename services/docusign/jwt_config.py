@@ -13,8 +13,9 @@ def get_jwt_token(private_key, scopes, auth_server, client_id, impersonated_user
         scopes=scopes
     )
     return response
+    self.request()
 
-def create_api_client(base_path, access_token):
+def create_api_client(base_path, access_token) -> ApiClient:
     """Create api client and construct API headers"""
     api_client = ApiClient()
     api_client.host = base_path

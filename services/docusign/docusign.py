@@ -1,6 +1,6 @@
 import sys, os
 from .envelope import Contract
-from docusign import ContractData
+from services.docusign import ContractData
 from docusign_esign import ApiClient
 from docusign_esign.client.api_exception import ApiException
 from .jwt_config import get_jwt_token
