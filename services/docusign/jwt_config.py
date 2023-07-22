@@ -1,6 +1,7 @@
-from docusign_esign import ApiClient
+from docusign_esign import ApiClient, OAuthToken
+from typing import List
 
-def get_jwt_token(private_key, scopes, auth_server, client_id, impersonated_user_id):
+def get_jwt_token(private_key: str, scopes: List[str], auth_server: str, client_id: str, impersonated_user_id: str) -> OAuthToken:
     """Get the jwt token"""
     api_client = ApiClient()
     api_client.set_base_path(auth_server)
@@ -13,9 +14,8 @@ def get_jwt_token(private_key, scopes, auth_server, client_id, impersonated_user
         scopes=scopes
     )
     return response
-    self.request()
 
-def create_api_client(base_path, access_token) -> ApiClient:
+def create_api_client(base_path: str, access_token: str) -> ApiClient:
     """Create api client and construct API headers"""
     api_client = ApiClient()
     api_client.host = base_path

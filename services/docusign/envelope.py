@@ -3,10 +3,11 @@ from .ds_config import DS_JWT
 from docusign_esign import EnvelopesApi, EnvelopeDefinition, TemplateRole, Tabs, Text, Number
 from .jwt_config import create_api_client
 from .env import CONTRACT_TEMPLATE_ID
+from typing import Dict
 
 class Contract:
     
-    def __init__(self, access_token, base_path, account_id): #TODO add types!
+    def __init__(self, access_token: str, base_path: str, account_id: str) -> None:
         self.access_token = access_token
         self.base_path = base_path
         self.account_id = account_id
@@ -18,7 +19,7 @@ class Contract:
         # Exceptions will be caught by the calling function
         self.envelopes_api = EnvelopesApi(self.api_client)
         
-    def make_contract(self, contract_data: ContractData):
+    def make_contract(self, contract_data: ContractData) -> Dict[str, str]:
         results = self.envelopes_api.create_envelope(
             account_id=self.account_id, envelope_definition=contract_data.generate_envelope()
         )

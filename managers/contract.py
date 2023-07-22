@@ -1,6 +1,7 @@
 from services.docusign import Docusign, ContractData
 from typing import Optional, List, Dict, Union
 from utilities import FlaskResponses
+from utilities.types import FlaskResponseType, HelperData
 from flask import Response
 
 class ContractManager():
@@ -11,7 +12,7 @@ class ContractManager():
                         artist_phone_number: int,
                         signer_name: str,
                         signer_email: str,
-                        helpers: Optional[List[Dict[str, Union[str, int]]]]) -> Response:
+                        helpers: Optional[HelperData]) -> FlaskResponseType:
 
         #TODO need to discuss spec for dealer contract
         if contract_type == "dealer":
