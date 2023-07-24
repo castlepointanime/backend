@@ -1,0 +1,13 @@
+tags:
+  - health
+responses:
+  200:
+    description: Server is ok
+    schema:
+      type: string
+      example: ok
+  500:
+    description: Internal server error
+    schema:
+      type: string
+      example: Internal server error

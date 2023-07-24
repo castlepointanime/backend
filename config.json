@@ -1,0 +1,6 @@
+{
+    "contract_limits": {
+        "max_additional_chairs": 2,
+        "max_helpers": 3
+    }
+}

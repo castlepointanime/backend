@@ -1,10 +1,11 @@
 from .Database import Database
-import uuid
+from typing import Dict, Any
+
 
 class Users:
 
     @classmethod
-    def empty_user() -> dict:
+    def empty_user(self) -> Dict[str, Any]:
         return {
             "_id": "",
             "contracts": []

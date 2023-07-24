@@ -1,2 +1,2 @@
-from .Database import Database
-from .Users import Users
+from .database import Database
+from .users import Users

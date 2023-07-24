@@ -3,9 +3,10 @@ from GoogleDrive import GoogleDrive
 import logging
 import json
 
+
 def lambda_handler(event, context):
     try:
-        document : Docusign = Docusign(event)
+        document: Docusign = Docusign(event)
         if not document.is_envelope_completed:
             result = {
                 "status": 400,
@@ -13,9 +14,9 @@ def lambda_handler(event, context):
             }
             logging.error("Failed to execute docusign function: docusign is not complete.")
             return result
-        api : GoogleDrive = GoogleDrive()
+        api: GoogleDrive = GoogleDrive()
         file_id = api.resumable_upload_to_drive(document.data, document.file_name, document.file_mimetype, is_base64=document.is_base64)
-        
+
         result = {
             "status": 200,
             "google_drive_file_id": file_id,

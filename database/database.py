@@ -1,44 +1,46 @@
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase, AsyncIOMotorCollection
-import env
+from config.env import MONGO_URI, MONGO_DB_NAME
 import logging
 from pymongo import MongoClient
-from pymongo.database import Database
+import pymongo.database
 from pymongo.collection import Collection
+from typing import Optional
+
 
 class Database:
 
-    async_client : AsyncIOMotorClient = None
-    client : MongoClient = None
-    
+    async_client: Optional[AsyncIOMotorClient] = None
+    client: Optional[MongoClient] = None
+
     @classmethod
     def _get_client_async(cls) -> AsyncIOMotorClient:
         if not cls.async_client:
-            cls.async_client = AsyncIOMotorClient(env.MONGO_URI)
+            cls.async_client = AsyncIOMotorClient(MONGO_URI)
             cls._verify_connection(cls.async_client)
         return cls.async_client
 
     @classmethod
     def _get_client(cls) -> MongoClient:
         if not cls.client:
-            cls.client = MongoClient(env.MONGO_URI)
+            cls.client = MongoClient(MONGO_URI)
             cls._verify_connection(cls.client)
         return cls.client
-    
-    @classmethod
-    def _get_database_async(cls) -> AsyncIOMotorDatabase:
-        return cls._get_client_async()[env.MONGO_DB_NAME]
-    
-    @classmethod
-    def _get_database(cls) -> Database:
-        return cls._get_client()[env.MONGO_DB_NAME]
 
     @classmethod
-    def _verify_connection(cls, client) -> None:
+    def _get_database_async(cls) -> AsyncIOMotorDatabase:
+        return cls._get_client_async()[MONGO_DB_NAME]
+
+    @classmethod
+    def _get_database(cls) -> pymongo.database.Database:
+        return cls._get_client()[MONGO_DB_NAME]
+
+    @classmethod
+    def _verify_connection(cls, client: AsyncIOMotorClient) -> None:
         try:
             client.server_info()
         except Exception as e:
-            logging.critical(f"Cannot connect to db.")
-            logging.exception(e)
+            logging.critical("Cannot connect to db.")
+            raise e
 
     @classmethod
     def get_users_database(cls) -> AsyncIOMotorCollection:
