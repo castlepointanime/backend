@@ -1,4 +1,4 @@
-FROM python:3.10-slim-bullseye
+FROM python:3.10.12-alpine3.18
 
 # copy the requirements file into the image
 COPY requirements.txt .
@@ -10,7 +10,7 @@ COPY . /app
 WORKDIR /app
 
 # install make
-RUN apt-get update && apt-get install make
+RUN apk update && apk add make
 
 # install the dependencies and packages in the requirements file
 RUN make
