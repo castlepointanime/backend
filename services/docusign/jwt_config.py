@@ -1,6 +1,7 @@
 from docusign_esign import ApiClient, OAuthToken
 from typing import List
 
+
 def get_jwt_token(private_key: str, scopes: List[str], auth_server: str, client_id: str, impersonated_user_id: str) -> OAuthToken:
     """Get the jwt token"""
     api_client = ApiClient()
@@ -15,6 +16,7 @@ def get_jwt_token(private_key: str, scopes: List[str], auth_server: str, client_
     )
     return response
 
+
 def create_api_client(base_path: str, access_token: str) -> ApiClient:
     """Create api client and construct API headers"""
     api_client = ApiClient()
@@ -22,4 +24,3 @@ def create_api_client(base_path: str, access_token: str) -> ApiClient:
     api_client.set_default_header(header_name="Authorization", header_value=f"Bearer {access_token}")
 
     return api_client
-

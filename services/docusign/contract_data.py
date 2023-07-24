@@ -1,10 +1,11 @@
 from docusign_esign import EnvelopeDefinition, TemplateRole, Tabs, Text, Number
 from .env import CONTRACT_TEMPLATE_ID
-from typing import Optional
 from utilities.types import HelperData, Helper
 from dataclasses import dataclass
 import datetime
-from typing import Dict, List, Union, Optional
+from typing import Dict, List, Optional
+from config import Config
+
 
 @dataclass
 class ContractData:
@@ -16,33 +17,34 @@ class ContractData:
     signer_email: str
     approver_name: str
     approver_email: str
-        
+
     def generate_envelope(self) -> EnvelopeDefinition:
+        logging.debug("Generating envelope...")
         env = EnvelopeDefinition(
             status="sent",
             template_id=CONTRACT_TEMPLATE_ID
         )
 
         envelope_keys = ["signer_email", "signer_name", "num_additional_chairs", "artist_phone_number"]
-        text_envelope_args : List[Dict[str, List[Text]]] = []
-        number_envelope_args : List[Dict[str, List[Number]]] = []
-        
+        text_envelope_args: List[Dict[str, List[Text]]] = []
+        number_envelope_args: List[Dict[str, List[Number]]] = []
+
         for key in envelope_keys:
             if type(getattr(self, key, None)) == str:
                 text_envelope_args.append(Text(tab_label=key, value=getattr(self, key)))
             elif type(getattr(self, key, None)) == int:
-                number_envelope_args.append(Number(tab_label=key, value=getattr(self,key)))
-        
+                number_envelope_args.append(Number(tab_label=key, value=getattr(self, key)))
+
         # Add helper badge information
         if (self.helpers):
             number_envelope_args.append(Number(tab_label="num_helper_badges", value=len(self.helpers)))
-        
-            for helper_num in range(0,3): #TODO dynamically add helpers based on config
-                if type(self.helpers[helper_num]) == Helper:
-                    text_envelope_args.append(Text(tab_label=f"helper{helper_num}_name", value=self.helpers[helper_num]['name']))
-                    number_envelope_args.append(Number(tab_label=f"helper{helper_num}_phone_number", value=self.helpers[helper_num]['phoneNumber']))
-                else:
-                    raise ValueError("Invalid Helper Data")
+
+            max_helpers = Config().get_contract_limit("max_helpers")
+
+            for helper_num in range(0, max_helpers):  # TODO dynamically add helpers based on config
+                assert type(self.helpers[helper_num]) == Helper, "Invalid Helper Data"
+                text_envelope_args.append(Text(tab_label=f"helper{helper_num}_name", value=self.helpers[helper_num]['name']))
+                number_envelope_args.append(Number(tab_label=f"helper{helper_num}_phone_number", value=self.helpers[helper_num]['phoneNumber']))
 
         # Generate date for contract
         current_date = datetime.datetime.now()
@@ -72,4 +74,5 @@ class ContractData:
         signer.tabs = Tabs(text_tabs=text_envelope_args, number_tabs=number_envelope_args)
         env.template_roles = [signer, approver]
 
+        logging.debug("Generated envelope.")
         return env
