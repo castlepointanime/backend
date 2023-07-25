@@ -1,6 +1,6 @@
 from http import HTTPStatus
 import json
-from utilities.types import FlaskResponseType, JSONData
+from utilities.types import FlaskResponseType, JSONDict
 
 
 class FlaskResponses():
@@ -10,5 +10,5 @@ class FlaskResponses():
         return json.dumps({'error': "not implemented yet"}), HTTPStatus.NOT_IMPLEMENTED
 
     @classmethod
-    def success(cls, data: JSONData) -> FlaskResponseType:
+    def success(cls, data: JSONDict) -> FlaskResponseType:
         return data, HTTPStatus.OK

@@ -11,7 +11,8 @@ class MeController(BaseController):
     # @swag_from()  # TODO
     def get(self) -> FlaskResponseType:
         self.verify_id_token()
-        return MeManager().get_user(current_user, current_cognito_jwt)
+        result = MeManager().get_user(current_user, current_cognito_jwt)
+        return FlaskResponses().success(result)
 
     @cognito_auth_required
     # @swag_from  # TODO

@@ -5,7 +5,7 @@ from flask import request
 from flasgger import validate
 import json
 from typing import Dict, Any, Collection, Union
-from utilities.types import JSONData
+from utilities.types import JSONDict
 from jsonschema.exceptions import ValidationError
 import logging
 from flask_cognito import cognito_auth_required, current_cognito_jwt
@@ -28,11 +28,11 @@ class BaseController(Resource):
         """
         data = request.get_json()
         assert data is not None, "No data in request"
-        self.log_debug(json.dumps(data))
+        cls.log_debug(json.dumps(data))
         if type(swagger_data) is dict:
-            validate(data, swagger_object_id, specs=swagger_data, validation_error_handler=self.error_handler)
+            validate(data, swagger_object_id, specs=swagger_data, validation_error_handler=cls.error_handler)
         else:
-            validate(data, swagger_object_id, swagger_data, validation_error_handler=self.error_handler)
+            validate(data, swagger_object_id, swagger_data, validation_error_handler=cls.error_handler)
         return data
 
     @classmethod
@@ -40,7 +40,7 @@ class BaseController(Resource):
         abort(Response(json.dumps({'error': message}), status=status))
 
     @classmethod
-    def error_handler(cls, err: ValidationError, data: JSONData, schema: JSONData) -> None:
+    def error_handler(cls, err: ValidationError, data: JSONDict, schema: JSONDict) -> None:
         """
         Error handler for flasgger
         """

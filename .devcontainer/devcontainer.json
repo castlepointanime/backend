@@ -1,4 +1,4 @@
-{
+{	
 	"name": "Backend",
 	"dockerComposeFile": "docker-compose-dev.yml",
 	"service": "backend",
@@ -10,9 +10,12 @@
 				"ms-vscode-remote.remote-containers",
 				"esbenp.prettier-vscode",
 				"ms-azuretools.vscode-docker",
-				"p1c2u.docker-compose"
+				"p1c2u.docker-compose",
+				"ms-vscode.makefile-tools",
+				"redhat.vscode-yaml",
+				"ms-python.python"
 			]
 		}
 	},
-	"postCreateCommand": "make run"
+	"postCreateCommand": "pip install -r requirements.txt"
 }

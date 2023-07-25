@@ -2,17 +2,16 @@ version: "3"
 services:
   mongodb:
     image: "mongo:6.0.3"
-    network_mode: host
     volumes:
       - ../../mongodb_data_container:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: "aa-dr-root"
       MONGO_INITDB_ROOT_PASSWORD: "cpac"
+    network_mode: host  
   backend:
     build:
       context: ../
       dockerfile: Dockerfile.devcontainer
-    network_mode: host
     env_file:
       - ../../backend.env
     volumes:
@@ -21,6 +20,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ~/.gitconfig:/.gitconfig
     command: /bin/sh -c "while sleep 1000; do :; done"
+    network_mode: host
     environment:
       AWS_SHARED_CREDENTIALS_FILE: /.aws/credentials
       AWS_CONFIG_FILE: /.aws/config

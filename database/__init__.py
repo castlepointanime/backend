@@ -1,2 +1,2 @@
-from .database import Database
-from .users import Users
+from .users import UsersDB
+from .contracts import ContractsDB

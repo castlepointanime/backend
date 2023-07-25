@@ -1,7 +1,7 @@
 from services.docusign import Docusign, ContractData
 from typing import Optional
-from utilities import FlaskResponses
-from utilities.types import FlaskResponseType, HelperData
+from utilities.types import HelperData
+from typing import Dict
 
 
 class ContractManager():
@@ -12,11 +12,11 @@ class ContractManager():
                         artist_phone_number: int,
                         signer_name: str,
                         signer_email: str,
-                        helpers: Optional[HelperData]) -> FlaskResponseType:
+                        helpers: Optional[HelperData]) -> Dict[str, str]:
 
         # TODO need to discuss spec for dealer contract
         if contract_type == "dealer":
-            return FlaskResponses().not_implemented_yet()
+            raise NotImplementedError
 
         # TODO randomly select admin from DB and assign as approver.
         approver_email = "TEST@gmail.com"
@@ -34,4 +34,4 @@ class ContractManager():
 
         docusign = Docusign()
 
-        return FlaskResponses().success({'contractId': docusign.create_contract(data)})
+        return {'contractId': docusign.create_contract(data)}
