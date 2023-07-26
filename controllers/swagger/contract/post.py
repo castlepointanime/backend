@@ -1,11 +1,11 @@
 from config import Config
 
 contract_post_schema = {
-    'tags': {
+    'tags': [
         'contract'
-    },
+    ],
     'parameters': [{
-        'name': 'contract data',
+        'name': 'make contract',
         'in': 'body',
         'required': True,
         'schema': {
@@ -13,8 +13,7 @@ contract_post_schema = {
             'type': 'object',
             'properties': {
                 'contractType': {
-                    'type': 'string',
-                    'enum': ['artist', 'dealer']
+                    '$ref': '#/definitions/VendorType'
                 },
                 'numAdditionalChairs': {
                     'type': 'integer',
@@ -51,6 +50,18 @@ contract_post_schema = {
         }
     }],
     'definitions': {
+        'Roles': {
+            'type': 'string',
+            'enum': ['admin', 'reviewer']
+        },
+        'UUID': {
+            'type': 'string',
+            'example': '94953e00-4bfe-482c-813b-8f6454500380'
+        },
+        'VendorType': {
+            'type': 'string',
+            'enum': ['artist', 'dealer']
+        },
         'Helper': {
             'type': 'object',
             'properties': {
@@ -75,10 +86,20 @@ contract_post_schema = {
                     'type': 'string',
                     'example': 'Error message'
                 }
-            },
-            'required': [
-                'error'
-            ]
+            }
+        },
+        'UnauthorizedError': {
+            'type': 'object',
+            'properties': {
+                'error': {
+                    'type': 'string',
+                    'example': 'Error message'
+                },
+                'description': {
+                    'type': 'string',
+                    'example': 'Request does not contain a well-formed access token in the \"Authorization\" header beginning with \"Bearer\"'
+                }
+            }
         }
     },
     'responses': {
@@ -89,10 +110,7 @@ contract_post_schema = {
                 'properties': {
                     'contractId': {
                         'type': 'integer'
-                    },
-                    'required': [
-                        'contractId'
-                    ]
+                    }
                 }
             }
         },
@@ -100,6 +118,12 @@ contract_post_schema = {
             'description': 'Failed to make contract',
             'schema': {
                 '$ref': '#/definitions/Error'
+            }
+        },
+        '401': {
+            'description': 'Unauthorized',
+            'schema': {
+                '$ref': '#/definitions/UnauthorizedError'
             }
         },
         '404': {

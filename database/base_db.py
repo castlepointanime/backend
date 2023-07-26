@@ -22,7 +22,6 @@ class BaseDB:
     @classmethod
     def _get_client(cls) -> MongoClient[MongoMappingType]:
         if not cls.client:
-            assert MONGO_URI is not None, "No mongo uri in environment"
             cls.client = MongoClient(MONGO_URI)
             cls._verify_connection(cls.client)
         return cls.client
@@ -37,10 +36,8 @@ class BaseDB:
 
     @classmethod
     def get_database_async(cls) -> AsyncIOMotorDatabase:
-        assert type(MONGO_DB_NAME) == str, "No mongo db name in environment"
         return cls._get_client_async()[MONGO_DB_NAME]
 
     @classmethod
     def get_database(cls) -> pymongo.database.Database[MongoMappingType]:
-        assert type(MONGO_DB_NAME) == str, "No mongo db name in environment"
         return cls._get_client()[MONGO_DB_NAME]

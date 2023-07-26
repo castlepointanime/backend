@@ -3,18 +3,27 @@ from .base_controller import BaseController
 from utilities.types import FlaskResponseType
 from utilities.flask_responses import FlaskResponses
 from managers import MeManager
+from flasgger import swag_from
 
 
 class MeController(BaseController):
 
+    ME_POST_SCHEMA = "swagger/me/post.yaml"
+
     @cognito_auth_required
-    # @swag_from()  # TODO
+    @swag_from("swagger/me/get.yaml")
     def get(self) -> FlaskResponseType:
         self.verify_id_token()
         result = MeManager().get_user(current_user, current_cognito_jwt)
         return FlaskResponses().success(result)
 
     @cognito_auth_required
-    # @swag_from  # TODO
     def patch(self) -> FlaskResponseType:
         return FlaskResponses().not_implemented_yet()  # TODO
+
+    @cognito_auth_required
+    @swag_from(ME_POST_SCHEMA)
+    def post(self) -> FlaskResponseType:
+        data = self.get_request_data(self.ME_POST_SCHEMA, "NewUserData")
+        result = MeManager().create_user(data['cognitoId'], data['vendorType'])
+        return FlaskResponses().created_resource(result)

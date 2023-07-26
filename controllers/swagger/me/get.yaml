@@ -1,0 +1,43 @@
+tags:
+  - me
+responses:
+  200:
+    description: Successfully fetched profile data
+    schema:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Bob
+        email:
+          type: string
+          example: bob123@mail.com
+        database:
+          type: object
+          properties:
+            _id:
+              $ref: '#/definitions/UUID'
+            roles:
+              $ref: '#/definitions/Roles'
+            vendorType:
+              $ref: '#/definitions/VendorType'
+            contracts:
+              type: array
+              items:
+                $ref: '#/definitions/UUID'
+  400:
+    description: Failed to get profile data
+    schema:
+      $ref: '#/definitions/Error'
+  401:
+    description: Unauthorized
+    schema:
+      $ref: '#/definitions/UnauthorizedError'
+  404:
+    description: Bad request
+    schema:
+      $ref: '#/definitions/Error'
+  500:
+    description: Internal server error
+    schema:
+      $ref: '#/definitions/Error'

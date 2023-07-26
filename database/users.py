@@ -8,10 +8,12 @@ from typing import Collection
 class UsersDB(BaseDB):
 
     @classmethod
-    def empty_user(self) -> JSONDict:
+    def _new_user(cls, _id: str, vendor_type: str) -> JSONDict:
         return {
-            "_id": "",
-            "contracts": []
+            "_id": _id,
+            "contracts": [],
+            "roles": [],
+            "vendor_type": vendor_type
         }
 
     @classmethod
@@ -20,10 +22,9 @@ class UsersDB(BaseDB):
         return cls.get_database().find_one(insert_query)
 
     @classmethod
-    def create_user(cls, uuid: str) -> bool:
-        insert_query = cls.empty_user()
-        insert_query['_id'] = uuid
-        cls.get_database().insert_one(insert_query)
+    def create_user(cls, uuid: str, vendor_type: str) -> bool:
+        insert_query = cls._new_user(uuid, vendor_type)
+        cls.get_database().insert_one(insert_query)  # TODO check the response to see if it was actually inserted
         return True
 
     @classmethod

@@ -12,16 +12,13 @@ class ContractController(BaseController):
     def post(self) -> FlaskResponseType:
         data = self.get_request_data(contract_post_schema, "ContractData")
 
-        try:
-            result = ContractManager().create_contract(
-                contract_type=data['contractType'],
-                helpers=data.get('helpers'),
-                num_additional_chairs=data['numAdditionalChairs'],
-                signer_email=data['signerEmail'],
-                signer_name=data['signerName'],
-                artist_phone_number=data['artistPhoneNumber']
-                )
-        except NotImplementedError:
-            return FlaskResponses.not_implemented_yet()
+        result = ContractManager().create_contract(
+            contract_type=data['contractType'],
+            helpers=data.get('helpers'),
+            num_additional_chairs=data['numAdditionalChairs'],
+            signer_email=data['signerEmail'],
+            signer_name=data['signerName'],
+            artist_phone_number=data['artistPhoneNumber']
+            )
 
         return FlaskResponses.success(result)

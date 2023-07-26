@@ -4,7 +4,7 @@ from flask_restful import Resource
 from flask import request
 from flasgger import validate
 import json
-from typing import Dict, Any, Collection, Union
+from typing import Dict, Any, Union
 from utilities.types import JSONDict
 from jsonschema.exceptions import ValidationError
 import logging
@@ -20,7 +20,7 @@ class BaseController(Resource):
         logging.debug('%s %s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, msg)
 
     @classmethod
-    def get_request_data(cls, swagger_data: Union[str, dict[str, Collection[Collection[str]]]], swagger_object_id: str) -> Dict["str", Any]:
+    def get_request_data(cls, swagger_data: Union[str, JSONDict], swagger_object_id: str) -> Dict["str", Any]:
         """
         Gets and verifies request data.
         It is preferred to use a .yaml str filepath for swagger_data,
@@ -36,7 +36,7 @@ class BaseController(Resource):
         return data
 
     @classmethod
-    def _abort_request(cls, message: str, status: int) -> None:
+    def abort_request(cls, message: str, status: int) -> None:
         abort(Response(json.dumps({'error': message}), status=status))
 
     @classmethod
@@ -46,7 +46,7 @@ class BaseController(Resource):
         """
         error_message = str(err.message)
         cls.log_debug(error_message)
-        cls._abort_request(error_message, HTTPStatus.BAD_REQUEST)
+        cls.abort_request(error_message, HTTPStatus.BAD_REQUEST)
 
     @classmethod
     @cognito_auth_required
@@ -55,4 +55,4 @@ class BaseController(Resource):
         Returns 400 if header token is not id
         """
         if current_cognito_jwt['token_use'] != "id":
-            cls._abort_request("Header must contain an ID token", HTTPStatus.BAD_REQUEST)
+            cls.abort_request("Header must contain an ID token", HTTPStatus.BAD_REQUEST)

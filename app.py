@@ -8,10 +8,11 @@ from time import strftime
 import logging
 from utilities.types import JSONDict
 from config.env import COGNITO_REGION, COGNITO_USERPOOL_ID, COGNITO_APP_CLIENT_ID
-from database import UsersDB
+from managers import MeManager
 from http import HTTPStatus
 from utilities.types import FlaskResponseType
 import traceback
+from controllers import BaseController
 
 app = Flask(__name__)
 
@@ -23,6 +24,11 @@ app.config.update({
     # optional
     'COGNITO_CHECK_TOKEN_EXPIRATION': True
 })
+
+app.config['SWAGGER'] = {
+    'title': 'AADR Backend API'
+}
+
 
 cogauth = CognitoAuth(app)
 cogauth.init_app(app)
@@ -42,13 +48,12 @@ def lookup_cognito_user(payload: JSONDict) -> str:
     assert 'sub' in payload, "Invalid Cognito JWT payload"
     user_id = payload['sub']
 
-    # Query MongoDB
-    user = UsersDB().get_user(user_id)  # TODO cannot use async
+    me_manager = MeManager()
+    user = me_manager.get_user_from_db(user_id)
 
-    # Create user if no user exists
     if user is None:
-        UsersDB().create_user(user_id)
-        user = UsersDB().get_user(user_id)
+        BaseController.abort_request("No account created", HTTPStatus.UNAUTHORIZED)
+        raise AssertionError("This shouldn't be reachable")
 
     # Add database information to payload
     payload['database'] = user
