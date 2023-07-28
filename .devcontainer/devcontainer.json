@@ -13,7 +13,9 @@
 				"p1c2u.docker-compose",
 				"ms-vscode.makefile-tools",
 				"redhat.vscode-yaml",
-				"ms-python.python"
+				"ms-python.python",
+				"matangover.mypy",
+				"ms-python.flake8"
 			]
 		}
 	},

@@ -17,7 +17,9 @@ responses:
           properties:
             _id:
               $ref: '#/definitions/UUID'
-            roles:
+            Group:
+              $ref: '#/definitions/Group'
+            Roles:
               $ref: '#/definitions/Roles'
             vendorType:
               $ref: '#/definitions/VendorType'

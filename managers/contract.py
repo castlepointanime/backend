@@ -2,6 +2,8 @@ from services.docusign import Docusign, ContractData
 from typing import Optional
 from utilities.types import HelperData
 from typing import Dict
+from database import UsersDB
+from utilities import NoApproverException
 
 
 class ContractManager():
@@ -16,11 +18,17 @@ class ContractManager():
 
         # TODO need to discuss spec for dealer contract
         if contract_type == "dealer":
-            raise NotImplementedError
+            raise NotImplementedError()
 
-        # TODO randomly select admin from DB and assign as approver.
-        approver_email = "TEST@gmail.com"
-        approver_name = "test"
+        # Randomly get an approver
+        approver = UsersDB.get_random_artist_reviewer()
+        if approver is None:
+            raise NoApproverException()
+        approver_email = approver.get("email")
+        approver_name = approver.get('name')
+
+        assert type(approver_email) == str
+        assert type(approver_name) == str
 
         data = ContractData(
             num_additional_chairs=num_additional_chairs,
@@ -34,4 +42,9 @@ class ContractManager():
 
         docusign = Docusign()
 
-        return {'contractId': docusign.create_contract(data)}
+        contract_id = docusign.create_contract(data)
+
+        # TODO create task to create reference of the contract in contracts DB
+        # TODO create task to update the approver's entry so he has a reference of the contract
+
+        return {'contractId': contract_id}

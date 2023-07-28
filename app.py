@@ -12,7 +12,6 @@ from managers import MeManager
 from http import HTTPStatus
 from utilities.types import FlaskResponseType
 import traceback
-from controllers import BaseController
 
 app = Flask(__name__)
 
@@ -51,10 +50,6 @@ def lookup_cognito_user(payload: JSONDict) -> str:
     me_manager = MeManager()
     user = me_manager.get_user_from_db(user_id)
 
-    if user is None:
-        BaseController.abort_request("No account created", HTTPStatus.UNAUTHORIZED)
-        raise AssertionError("This shouldn't be reachable")
-
     # Add database information to payload
     payload['database'] = user
 
@@ -77,7 +72,7 @@ def after_request(response: Response) -> Response:
     return response
 
 
-# @app.errorhandler(Exception)  # TODO mypy error
+# @app.errorhandler(Exception)  # type: ignore[type-var]
 def exceptions(e: Exception) -> FlaskResponseType:
     tb = traceback.format_exc()
     timestamp = strftime('[%Y-%b-%d %H:%M]')

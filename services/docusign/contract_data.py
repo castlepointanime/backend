@@ -19,7 +19,7 @@ class ContractData:
     approver_name: str
     approver_email: str
 
-    def generate_envelope(self) -> EnvelopeDefinition:
+    def generate_envelope(self) -> EnvelopeDefinition:  # type: ignore[no-any-unimported]
         logging.debug("Generating envelope...")
         env = EnvelopeDefinition(
             status="sent",
@@ -27,8 +27,8 @@ class ContractData:
         )
 
         envelope_keys = ["signer_email", "signer_name", "num_additional_chairs", "artist_phone_number"]
-        text_envelope_args: List[Dict[str, List[Text]]] = []
-        number_envelope_args: List[Dict[str, List[Number]]] = []
+        text_envelope_args: List[Dict[str, List[Text]]] = []  # type: ignore[no-any-unimported]
+        number_envelope_args: List[Dict[str, List[Number]]] = []  # type: ignore[no-any-unimported]
 
         for key in envelope_keys:
             if type(getattr(self, key, None)) == str:

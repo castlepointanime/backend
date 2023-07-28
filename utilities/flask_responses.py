@@ -16,3 +16,7 @@ class FlaskResponses():
     @classmethod
     def created_resource(cls, data: JSONType) -> FlaskResponseType:
         return data, HTTPStatus.CREATED
+
+    @classmethod
+    def conflict(cls, data: JSONType) -> FlaskResponseType:
+        return data, HTTPStatus.CONFLICT

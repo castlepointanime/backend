@@ -2,11 +2,12 @@ from werkzeug.local import LocalProxy
 from utilities.types import JSONDict
 from typing import Dict, Optional
 from database import UsersDB
+from utilities.types import MongoMappingType
 
 
 class MeManager():
 
-    def get_user_from_db(cls, user_id: str) -> Optional[JSONDict]:
+    def get_user_from_db(cls, user_id: str) -> Optional[MongoMappingType]:
         return UsersDB().get_user(user_id)
 
     def get_user(self, current_user: str, current_cognito_jwt: LocalProxy[JSONDict]) -> Dict[str, str]:

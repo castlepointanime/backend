@@ -1,4 +1,5 @@
 from config import Config
+from utilities.rbac import Groups, Roles
 
 contract_post_schema = {
     'tags': [
@@ -50,13 +51,19 @@ contract_post_schema = {
         }
     }],
     'definitions': {
+        'Group': {
+            'type': 'string',
+            'enum': Groups.get_all()
+        },
         'Roles': {
             'type': 'string',
-            'enum': ['admin', 'reviewer']
+            'enum': Roles.get_all()
         },
         'UUID': {
             'type': 'string',
-            'example': '94953e00-4bfe-482c-813b-8f6454500380'
+            'example': '94953e00-4bfe-482c-813b-8f6454500380',
+            'minLength': 36,
+            'maxLength': 36
         },
         'VendorType': {
             'type': 'string',
@@ -128,6 +135,12 @@ contract_post_schema = {
         },
         '404': {
             'description': 'Bad request',
+            'schema': {
+                '$ref': '#/definitions/Error'
+            }
+        },
+        '409': {
+            'description': 'No staff exists to approve the contract',
             'schema': {
                 '$ref': '#/definitions/Error'
             }

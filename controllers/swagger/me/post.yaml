@@ -8,12 +8,9 @@ parameters:
       id: NewUserData
       type: object
       properties:
-        cognitoId:
-          $ref: '#/definitions/UUID'
         vendorType:
           $ref: '#/definitions/VendorType'
       required:
-        - cognitoId
         - vendorType
 responses:
   201:

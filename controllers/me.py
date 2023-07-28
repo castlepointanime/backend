@@ -25,5 +25,5 @@ class MeController(BaseController):
     @swag_from(ME_POST_SCHEMA)
     def post(self) -> FlaskResponseType:
         data = self.get_request_data(self.ME_POST_SCHEMA, "NewUserData")
-        result = MeManager().create_user(data['cognitoId'], data['vendorType'])
+        result = MeManager().create_user(current_cognito_jwt['sub'], data['vendorType'])
         return FlaskResponses().created_resource(result)

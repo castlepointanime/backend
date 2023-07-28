@@ -28,7 +28,7 @@ class Docusign:
         return consent_url
 
     @classmethod
-    def _get_token(cls, private_key: str, api_client: ApiClient) -> Dict[str, str]:
+    def _get_token(cls, private_key: str, api_client: ApiClient) -> Dict[str, str]:  # type: ignore[no-any-unimported]
         # Call request_jwt_user_token method
 
         authorization_server: str = Config().get_docusign_config('authorization_server')
@@ -47,7 +47,7 @@ class Docusign:
         return {"access_token": access_token, "api_account_id": api_account_id, "base_path": base_path}
 
     @classmethod
-    def _handle_consent(cls, err: ApiException, callback: Callable[[ApiClient, str, ContractData], str], api_client: ApiClient, private_key: str, contract_data: ContractData) -> str:
+    def _handle_consent(cls, err: ApiException, callback: Callable[[ApiClient, str, ContractData], str], api_client: ApiClient, private_key: str, contract_data: ContractData) -> str:  # type: ignore[no-any-unimported]
         logging.debug("Handling consent")
         body = err.body.decode('utf8')
 
@@ -64,7 +64,7 @@ class Docusign:
         sys.exit("Failed to grant consent")  # TODO can this sys.exit be removed?
 
     @classmethod
-    def _run(cls, api_client: ApiClient, private_key: str, contract_data: ContractData) -> str:
+    def _run(cls, api_client: ApiClient, private_key: str, contract_data: ContractData) -> str:  # type: ignore[no-any-unimported]
         logging.debug("Preparing to make a contract")
         jwt_values = cls._get_token(private_key, api_client)
 

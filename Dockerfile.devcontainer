@@ -14,6 +14,6 @@ RUN curl --create-dirs -O --output-dir /tmp "https://awscli.amazonaws.com/awscli
     unzip /tmp/awscli-exe-linux-x86_64.zip -d /tmp && \
     /tmp/aws/install --bin-dir /bin --install-dir /aws-cli
 
-RUN pip install aws-sam-cli
+#RUN pip install aws-sam-cli
 
 RUN git config --global --add safe.directory /portal/backend

@@ -2,7 +2,8 @@ from motor.motor_asyncio import AsyncIOMotorCollection
 from .base_db import BaseDB
 from typing import Optional
 from utilities.types import JSONDict, MongoMappingType
-from typing import Collection
+import pymongo
+from utilities.rbac import Roles, Groups
 
 
 class UsersDB(BaseDB):
@@ -12,25 +13,56 @@ class UsersDB(BaseDB):
         return {
             "_id": _id,
             "contracts": [],
-            "roles": [],
+            "group": Groups.CUSTOMER,
             "vendor_type": vendor_type
         }
 
     @classmethod
-    def get_user(cls, uuid: str) -> Optional[JSONDict]:
-        insert_query = {"_id": uuid}
-        return cls.get_database().find_one(insert_query)
+    def get_user(cls, uuid: str) -> Optional[MongoMappingType]:
+        query = {"_id": uuid}
+        return cls.get_collection().find_one(query)
 
     @classmethod
     def create_user(cls, uuid: str, vendor_type: str) -> bool:
-        insert_query = cls._new_user(uuid, vendor_type)
-        cls.get_database().insert_one(insert_query)  # TODO check the response to see if it was actually inserted
+        query = cls._new_user(uuid, vendor_type)
+        cls.get_collection().insert_one(query)
+        # TODO check the response to see if it was actually inserted
         return True
 
     @classmethod
-    def get_database(cls) -> AsyncIOMotorCollection:
+    def get_collection(cls) -> pymongo.collection.Collection[MongoMappingType]:
         return super().get_database()['users']
 
     @classmethod
-    def get_database_async(cls) -> Collection[MongoMappingType]:
+    def get_collection_async(cls) -> AsyncIOMotorCollection:  # type: ignore[no-any-unimported]
         return super().get_database_async()['users']
+
+    @classmethod
+    def _get_random_reviewer(cls, role: str) -> Optional[MongoMappingType]:
+        query = {
+            "$and": [
+                {
+                    "roles": {
+                        "$in": [role]
+                    }
+                },
+                {
+                    "group": {
+                        "$in": [Groups.DEVELOPER, Groups.STAFF]
+                    }
+                }
+            ]
+        }
+        results = cls.get_random(cls.get_collection(), 1, query)
+        if len(results) == 0:
+            return None
+        assert len(results) == 1
+        return results[0]
+
+    @classmethod
+    def get_random_artist_reviewer(cls) -> Optional[MongoMappingType]:
+        return cls._get_random_reviewer(Roles.ARTIST_REVIEWER)
+
+    @classmethod
+    def get_random_dealer_reviewer(cls) -> Optional[MongoMappingType]:
+        return cls._get_random_reviewer(Roles.DEALER_REVIEWER)

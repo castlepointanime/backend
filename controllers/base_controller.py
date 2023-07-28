@@ -12,22 +12,22 @@ from flask_cognito import cognito_auth_required, current_cognito_jwt
 from time import strftime
 
 
-class BaseController(Resource):
+class BaseController(Resource):  # type: ignore[no-any-unimported]
 
     @classmethod
     def log_debug(cls, msg: str) -> None:
         timestamp = strftime('[%Y-%b-%d %H:%M]')
-        logging.debug('%s %s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, msg)
+        logging.debug('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, msg)
 
     @classmethod
-    def get_request_data(cls, swagger_data: Union[str, JSONDict], swagger_object_id: str) -> Dict["str", Any]:
+    def get_request_data(cls, swagger_data: Union[str, JSONDict], swagger_object_id: str) -> Dict[str, Any]:
         """
         Gets and verifies request data.
         It is preferred to use a .yaml str filepath for swagger_data,
         but for dynamic swagger API's based on configs, use a dictionary of the spec
         """
         data = request.get_json()
-        assert data is not None, "No data in request"
+        assert type(data) == dict, "Invalid data in request"
         cls.log_debug(json.dumps(data))
         if type(swagger_data) is dict:
             validate(data, swagger_object_id, specs=swagger_data, validation_error_handler=cls.error_handler)
