@@ -1,10 +1,11 @@
 from docusign_esign import EnvelopeDefinition, TemplateRole, Tabs, Text, Number
-from .env import CONTRACT_TEMPLATE_ID
+from config.env import CONTRACT_TEMPLATE_ID
 from utilities.types import HelperData, Helper
 from dataclasses import dataclass
 import datetime
 from typing import Dict, List, Optional
 from config import Config
+import logging
 
 
 @dataclass
@@ -18,7 +19,7 @@ class ContractData:
     approver_name: str
     approver_email: str
 
-    def generate_envelope(self) -> EnvelopeDefinition:
+    def generate_envelope(self) -> EnvelopeDefinition:  # type: ignore[no-any-unimported]
         logging.debug("Generating envelope...")
         env = EnvelopeDefinition(
             status="sent",
@@ -26,8 +27,8 @@ class ContractData:
         )
 
         envelope_keys = ["signer_email", "signer_name", "num_additional_chairs", "artist_phone_number"]
-        text_envelope_args: List[Dict[str, List[Text]]] = []
-        number_envelope_args: List[Dict[str, List[Number]]] = []
+        text_envelope_args: List[Dict[str, List[Text]]] = []  # type: ignore[no-any-unimported]
+        number_envelope_args: List[Dict[str, List[Number]]] = []  # type: ignore[no-any-unimported]
 
         for key in envelope_keys:
             if type(getattr(self, key, None)) == str:
@@ -40,9 +41,11 @@ class ContractData:
             number_envelope_args.append(Number(tab_label="num_helper_badges", value=len(self.helpers)))
 
             max_helpers = Config().get_contract_limit("max_helpers")
+            
+            assert len(self.helpers) <= max_helpers, "Invalid Helper Data"
 
-            for helper_num in range(0, max_helpers):  # TODO dynamically add helpers based on config
-                assert type(self.helpers[helper_num]) == Helper, "Invalid Helper Data"
+            for helper_num in range(0, len(self.helpers)):
+                assert type(self.helpers[helper_num]) == dict, "Invalid Helper Data"
                 text_envelope_args.append(Text(tab_label=f"helper{helper_num}_name", value=self.helpers[helper_num]['name']))
                 number_envelope_args.append(Number(tab_label=f"helper{helper_num}_phone_number", value=self.helpers[helper_num]['phoneNumber']))
 

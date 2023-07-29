@@ -1,21 +1,18 @@
 from config import Config
+from utilities.rbac import Groups, Roles
 
 contract_post_schema = {
-    'tags': {
+    'tags': [
         'contract'
-    },
+    ],
     'parameters': [{
-        'name': 'contract data',
+        'name': 'make contract',
         'in': 'body',
         'required': True,
         'schema': {
             'id': 'ContractData',
             'type': 'object',
             'properties': {
-                'contractType': {
-                    'type': 'string',
-                    'enum': ['artist', 'dealer']
-                },
                 'numAdditionalChairs': {
                     'type': 'integer',
                     'minimum': 0,
@@ -24,14 +21,6 @@ contract_post_schema = {
                 },
                 'artistPhoneNumber': {
                     '$ref': '#/definitions/PhoneNumber'
-                },
-                'signerName': {
-                    'type': 'string',
-                    'example': 'Bob'
-                },
-                'signerEmail': {
-                    'type': 'string',
-                    'format': 'email'
                 },
                 'helpers': {
                     'type': 'array',
@@ -42,15 +31,30 @@ contract_post_schema = {
                 }
             },
             'required': [
-                'contractType',
                 'numAdditionalChairs',
                 'artistPhoneNumber',
-                'signerName',
-                'signerEmail'
             ]
         }
     }],
     'definitions': {
+        'Group': {
+            'type': 'string',
+            'enum': Groups.get_all()
+        },
+        'Roles': {
+            'type': 'string',
+            'enum': Roles.get_all()
+        },
+        'UUID': {
+            'type': 'string',
+            'example': '94953e00-4bfe-482c-813b-8f6454500380',
+            'minLength': 36,
+            'maxLength': 36
+        },
+        'VendorType': {
+            'type': 'string',
+            'enum': ['artist', 'dealer']
+        },
         'Helper': {
             'type': 'object',
             'properties': {
@@ -75,10 +79,20 @@ contract_post_schema = {
                     'type': 'string',
                     'example': 'Error message'
                 }
-            },
-            'required': [
-                'error'
-            ]
+            }
+        },
+        'UnauthorizedError': {
+            'type': 'object',
+            'properties': {
+                'error': {
+                    'type': 'string',
+                    'example': 'Error message'
+                },
+                'description': {
+                    'type': 'string',
+                    'example': 'Request does not contain a well-formed access token in the \"Authorization\" header beginning with \"Bearer\"'
+                }
+            }
         }
     },
     'responses': {
@@ -89,10 +103,7 @@ contract_post_schema = {
                 'properties': {
                     'contractId': {
                         'type': 'integer'
-                    },
-                    'required': [
-                        'contractId'
-                    ]
+                    }
                 }
             }
         },
@@ -102,8 +113,20 @@ contract_post_schema = {
                 '$ref': '#/definitions/Error'
             }
         },
+        '401': {
+            'description': 'Unauthorized',
+            'schema': {
+                '$ref': '#/definitions/UnauthorizedError'
+            }
+        },
         '404': {
             'description': 'Bad request',
+            'schema': {
+                '$ref': '#/definitions/Error'
+            }
+        },
+        '409': {
+            'description': 'No staff exists to approve the contract',
             'schema': {
                 '$ref': '#/definitions/Error'
             }

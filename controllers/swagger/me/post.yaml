@@ -1,0 +1,42 @@
+tags:
+  - me
+parameters:
+  - name: 'make profile'
+    in: body
+    required: True
+    schema:
+      id: NewUserData
+      type: object
+      properties:
+        vendorType:
+          $ref: '#/definitions/VendorType'
+      required:
+        - vendorType
+definitions:
+  VendorType:
+    type: string
+    enum: [artist, dealer]
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+        example: 'Error message'
+responses:
+  201:
+    description: Successfully created new user
+    schema:
+      type: boolean
+  400:
+    description: Failed to make user
+    schema:
+      $ref: '#/definitions/Error'
+  404:
+    description: Bad request
+    schema:
+      $ref: '#/definitions/Error'
+  500:
+    description: Internal server error
+    schema:
+      $ref: '#/definitions/Error'
+  

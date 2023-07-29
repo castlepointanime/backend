@@ -11,3 +11,8 @@ class Config():
         value = self._config['contract_limits'].get(key)
         assert type(value) == int, "Invalid config file. Contract limits can only be integers."
         return value
+
+    def get_docusign_config(self, key: str) -> str:
+        value = self._config['docusign'].get(key)
+        assert type(value) == str, "Invalid docusign config"
+        return value

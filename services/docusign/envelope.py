@@ -2,6 +2,7 @@ from .contract_data import ContractData
 from docusign_esign import EnvelopesApi
 from .jwt_config import create_api_client
 from typing import Dict
+import logging
 
 
 class Contract:
