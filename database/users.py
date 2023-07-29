@@ -4,6 +4,7 @@ from typing import Optional
 from utilities.types import JSONDict, MongoMappingType
 import pymongo
 from utilities.rbac import Roles, Groups
+import pymongo.results
 
 
 class UsersDB(BaseDB):
@@ -14,7 +15,8 @@ class UsersDB(BaseDB):
             "_id": _id,
             "contracts": [],
             "group": Groups.CUSTOMER,
-            "vendor_type": vendor_type
+            "vendor_type": vendor_type,
+            "roles": []
         }
 
     @classmethod
@@ -25,9 +27,9 @@ class UsersDB(BaseDB):
     @classmethod
     def create_user(cls, uuid: str, vendor_type: str) -> bool:
         query = cls._new_user(uuid, vendor_type)
-        cls.get_collection().insert_one(query)
-        # TODO check the response to see if it was actually inserted
-        return True
+        # TODO catch error if user already exists
+        ret : pymongo.results.InsertOneResult = cls.get_collection().insert_one(query)
+        return ret.acknowledged
 
     @classmethod
     def get_collection(cls) -> pymongo.collection.Collection[MongoMappingType]:
@@ -36,6 +38,13 @@ class UsersDB(BaseDB):
     @classmethod
     def get_collection_async(cls) -> AsyncIOMotorCollection:  # type: ignore[no-any-unimported]
         return super().get_database_async()['users']
+    
+    @classmethod
+    def add_user_contract(cls, uuid: str, contract_id: str) -> bool:
+        return cls.get_collection().updateOne(
+            {"_id": uuid},
+            {"$addToSet": {"contracts": contract_id}}
+        )
 
     @classmethod
     def _get_random_reviewer(cls, role: str) -> Optional[MongoMappingType]:

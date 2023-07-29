@@ -13,9 +13,6 @@ contract_post_schema = {
             'id': 'ContractData',
             'type': 'object',
             'properties': {
-                'contractType': {
-                    '$ref': '#/definitions/VendorType'
-                },
                 'numAdditionalChairs': {
                     'type': 'integer',
                     'minimum': 0,
@@ -24,14 +21,6 @@ contract_post_schema = {
                 },
                 'artistPhoneNumber': {
                     '$ref': '#/definitions/PhoneNumber'
-                },
-                'signerName': {
-                    'type': 'string',
-                    'example': 'Bob'
-                },
-                'signerEmail': {
-                    'type': 'string',
-                    'format': 'email'
                 },
                 'helpers': {
                     'type': 'array',
@@ -42,11 +31,8 @@ contract_post_schema = {
                 }
             },
             'required': [
-                'contractType',
                 'numAdditionalChairs',
                 'artistPhoneNumber',
-                'signerName',
-                'signerEmail'
             ]
         }
     }],

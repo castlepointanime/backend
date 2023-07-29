@@ -7,7 +7,7 @@ class FlaskResponses():
 
     @classmethod
     def not_implemented_yet(cls) -> FlaskResponseType:
-        return json.dumps({'error': "not implemented yet"}), HTTPStatus.NOT_IMPLEMENTED
+        return {'error': "not implemented yet"}, HTTPStatus.NOT_IMPLEMENTED
 
     @classmethod
     def success(cls, data: JSONType) -> FlaskResponseType:
@@ -20,3 +20,7 @@ class FlaskResponses():
     @classmethod
     def conflict(cls, data: JSONType) -> FlaskResponseType:
         return data, HTTPStatus.CONFLICT
+
+    @classmethod
+    def bad_request(cls, msg: str) -> FlaskResponseType:
+        return {'error': msg}, HTTPStatus.BAD_REQUEST

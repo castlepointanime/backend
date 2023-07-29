@@ -12,6 +12,16 @@ parameters:
           $ref: '#/definitions/VendorType'
       required:
         - vendorType
+definitions:
+  VendorType:
+    type: string
+    enum: [artist, dealer]
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+        example: 'Error message'
 responses:
   201:
     description: Successfully created new user

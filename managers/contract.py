@@ -9,6 +9,7 @@ from utilities import NoApproverException
 class ContractManager():
 
     def create_contract(self,
+                        user_id: str,
                         contract_type: str,
                         num_additional_chairs: int,
                         artist_phone_number: int,
@@ -24,8 +25,11 @@ class ContractManager():
         approver = UsersDB.get_random_artist_reviewer()
         if approver is None:
             raise NoApproverException()
-        approver_email = approver.get("email")
-        approver_name = approver.get('name')
+        # TODO cannot do this to get approver. Need to grab from cognito DB
+        # approver_email = approver.get("email")
+        # approver_name = approver.get('name')
+        approver_email = "test@gmail.com"
+        approver_name = "test"
 
         assert type(approver_email) == str
         assert type(approver_name) == str
@@ -43,8 +47,8 @@ class ContractManager():
         docusign = Docusign()
 
         contract_id = docusign.create_contract(data)
-
-        # TODO create task to create reference of the contract in contracts DB
+        
+        UsersDB().add_user_contract(user_id, contract_id)
         # TODO create task to update the approver's entry so he has a reference of the contract
 
         return {'contractId': contract_id}

@@ -13,7 +13,6 @@ class MeController(BaseController):
     @cognito_auth_required
     @swag_from("swagger/me/get.yaml")
     def get(self) -> FlaskResponseType:
-        self.verify_id_token()
         result = MeManager().get_user(current_user, current_cognito_jwt)
         return FlaskResponses().success(result)
 
@@ -25,5 +24,7 @@ class MeController(BaseController):
     @swag_from(ME_POST_SCHEMA)
     def post(self) -> FlaskResponseType:
         data = self.get_request_data(self.ME_POST_SCHEMA, "NewUserData")
-        result = MeManager().create_user(current_cognito_jwt['sub'], data['vendorType'])
-        return FlaskResponses().created_resource(result)
+        ret = MeManager().create_user(current_cognito_jwt['sub'], data['vendorType'])
+        if not ret:
+            return FlaskResponses().error("Failed to make user")
+        return FlaskResponses().created_resource(ret)

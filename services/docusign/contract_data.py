@@ -41,9 +41,11 @@ class ContractData:
             number_envelope_args.append(Number(tab_label="num_helper_badges", value=len(self.helpers)))
 
             max_helpers = Config().get_contract_limit("max_helpers")
+            
+            assert len(self.helpers) <= max_helpers, "Invalid Helper Data"
 
-            for helper_num in range(0, max_helpers):
-                assert type(self.helpers[helper_num]) == Helper, "Invalid Helper Data"
+            for helper_num in range(0, len(self.helpers)):
+                assert type(self.helpers[helper_num]) == dict, "Invalid Helper Data"
                 text_envelope_args.append(Text(tab_label=f"helper{helper_num}_name", value=self.helpers[helper_num]['name']))
                 number_envelope_args.append(Number(tab_label=f"helper{helper_num}_phone_number", value=self.helpers[helper_num]['phoneNumber']))
 
