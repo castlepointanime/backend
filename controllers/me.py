@@ -26,5 +26,5 @@ class MeController(BaseController):
         data = self.get_request_data(self.ME_POST_SCHEMA, "NewUserData")
         ret = MeManager().create_user(current_cognito_jwt['sub'], data['vendorType'])
         if not ret:
-            return FlaskResponses().error("Failed to make user")
+            return FlaskResponses().bad_request("Failed to make user")
         return FlaskResponses().created_resource(ret)

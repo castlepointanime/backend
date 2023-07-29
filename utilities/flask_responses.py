@@ -1,5 +1,4 @@
 from http import HTTPStatus
-import json
 from utilities.types import FlaskResponseType, JSONType
 
 

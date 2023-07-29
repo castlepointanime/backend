@@ -28,7 +28,7 @@ class UsersDB(BaseDB):
     def create_user(cls, uuid: str, vendor_type: str) -> bool:
         query = cls._new_user(uuid, vendor_type)
         # TODO catch error if user already exists
-        ret : pymongo.results.InsertOneResult = cls.get_collection().insert_one(query)
+        ret: pymongo.results.InsertOneResult = cls.get_collection().insert_one(query)
         return ret.acknowledged
 
     @classmethod
@@ -38,7 +38,7 @@ class UsersDB(BaseDB):
     @classmethod
     def get_collection_async(cls) -> AsyncIOMotorCollection:  # type: ignore[no-any-unimported]
         return super().get_database_async()['users']
-    
+
     @classmethod
     def add_user_contract(cls, uuid: str, contract_id: str) -> bool:
         return cls.get_collection().updateOne(

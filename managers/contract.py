@@ -47,7 +47,7 @@ class ContractManager():
         docusign = Docusign()
 
         contract_id = docusign.create_contract(data)
-        
+
         UsersDB().add_user_contract(user_id, contract_id)
         # TODO create task to update the approver's entry so he has a reference of the contract
 

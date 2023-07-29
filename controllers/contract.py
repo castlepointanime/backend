@@ -15,11 +15,11 @@ class ContractController(BaseController):
     @swag_from(contract_post_schema)
     def post(self) -> FlaskResponseType:
         data = self.get_request_data(contract_post_schema, "ContractData")
-        
+
         user_db: Optional[JSONDict] = current_cognito_jwt['database']
         if user_db is None:
             return FlaskResponses.bad_request("User needs to make an account")
-            
+
         try:
             result = ContractManager().create_contract(
                 current_cognito_jwt['sub'],
