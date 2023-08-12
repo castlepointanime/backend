@@ -35,6 +35,8 @@ class ContractData:
                 text_envelope_args.append(Text(tab_label=key, value=getattr(self, key)))
             elif type(getattr(self, key, None)) == int:
                 number_envelope_args.append(Number(tab_label=key, value=getattr(self, key)))
+            else:
+                raise Exception(f"Invalid key data. '{key}' with value '{getattr(self, key, None)}' with type '{type(getattr(self, key, None))}' can only be a string or int")
 
         # Add helper badge information
         if (self.helpers):

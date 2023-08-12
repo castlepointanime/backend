@@ -41,7 +41,7 @@ class UsersDB(BaseDB):
 
     @classmethod
     def add_user_contract(cls, uuid: str, contract_id: str) -> bool:
-        return cls.get_collection().updateOne(
+        return cls.get_collection().update_one(
             {"_id": uuid},
             {"$addToSet": {"contracts": contract_id}}
         )
