@@ -40,7 +40,7 @@ class UsersDB(BaseDB):
         return super().get_database_async()['users']
 
     @classmethod
-    def add_user_contract(cls, uuid: str, contract_id: str) -> bool:
+    def add_user_contract(cls, uuid: str, contract_id: str) -> pymongo.results.UpdateResult:
         return cls.get_collection().update_one(
             {"_id": uuid},
             {"$addToSet": {"contracts": contract_id}}
