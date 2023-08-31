@@ -1,4 +1,5 @@
 from flask import Flask, Response, request
+from flask.typing import ResponseReturnValue
 from flask_cors import CORS
 from flask_cognito import CognitoAuth
 from flasgger import Swagger
@@ -10,7 +11,6 @@ from utilities.types import JSONDict
 from config.env import COGNITO_REGION, COGNITO_USERPOOL_ID, COGNITO_APP_CLIENT_ID
 from managers import MeManager
 from http import HTTPStatus
-from utilities.types import FlaskResponseType
 import traceback
 
 app = Flask(__name__)
@@ -72,8 +72,8 @@ def after_request(response: Response) -> Response:
     return response
 
 
-# @app.errorhandler(Exception)  # type: ignore[type-var]
-def exceptions(e: Exception) -> FlaskResponseType:
+@app.errorhandler(Exception)
+def exceptions(e: Exception) -> ResponseReturnValue:
     tb = traceback.format_exc()
     timestamp = strftime('[%Y-%b-%d %H:%M]')
     logging.error('%s %s %s %s %s 5xx INTERNAL SERVER ERROR\n%s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, tb)

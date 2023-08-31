@@ -1,8 +1,8 @@
+from flask.typing import ResponseReturnValue
 from flask_cognito import cognito_auth_required, current_cognito_jwt, current_user
 from managers import ContractManager
 from flasgger import swag_from
 from .base_controller import BaseController
-from utilities.types import FlaskResponseType
 from utilities import FlaskResponses, NoApproverException
 from .swagger.contract.post import contract_post_schema
 from utilities.types import JSONDict
@@ -13,7 +13,7 @@ class ContractController(BaseController):
 
     @cognito_auth_required
     @swag_from(contract_post_schema)
-    def post(self) -> FlaskResponseType:
+    def post(self) -> ResponseReturnValue:
         data = self.get_request_data(contract_post_schema, "ContractData")
 
         user_db: Optional[JSONDict] = current_cognito_jwt['database']
