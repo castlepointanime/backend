@@ -27,7 +27,7 @@ class ContractController(BaseController):
                 helpers=data.get('helpers'),
                 num_additional_chairs=data['numAdditionalChairs'],
                 signer_email=current_cognito_jwt['email'],  # TODO assert that emails are verified
-                signer_name=current_user,
+                signer_name=str(current_user),
                 artist_phone_number=data['artistPhoneNumber']
                 )
         except NoApproverException:

@@ -13,7 +13,7 @@ class MeController(BaseController):
     @cognito_auth_required
     @swag_from("swagger/me/get.yaml")
     def get(self) -> FlaskResponseType:
-        result = MeManager().get_user(current_user, current_cognito_jwt)
+        result = MeManager().get_user(str(current_user), current_cognito_jwt)
         return FlaskResponses().success(result)
 
     @cognito_auth_required
