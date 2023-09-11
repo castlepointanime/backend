@@ -1,5 +1,6 @@
 aniso8601==9.0.1
 anyio==3.7.1
+asgiref==3.7.2
 asyncio==3.4.3
 attrs==23.1.0
 blinker==1.6.2
@@ -18,7 +19,6 @@ flasgger==0.9.7.1
 Flask==2.3.2
 Flask-Cognito==1.18
 Flask-Cors==4.0.0
-Flask-RESTful==0.3.10
 gunicorn==21.2.0
 h11==0.14.0
 httpcore==0.17.3

@@ -7,5 +7,5 @@ from utilities import FlaskResponses
 class HealthController(BaseController):
 
     @swag_from("swagger/health/get.yaml")
-    def get(self) -> FlaskResponseType:
+    async def get(self) -> FlaskResponseType:
         return FlaskResponses().success("ok")

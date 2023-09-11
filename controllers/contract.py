@@ -13,7 +13,7 @@ class ContractController(BaseController):
 
     @cognito_auth_required
     @swag_from(contract_post_schema)
-    def post(self) -> FlaskResponseType:
+    async def post(self) -> FlaskResponseType:
         data = self.get_request_data(contract_post_schema, "ContractData")
 
         user_db: Optional[JSONDict] = current_cognito_jwt['database']
@@ -21,7 +21,7 @@ class ContractController(BaseController):
             return FlaskResponses.bad_request("User needs to make an account")
 
         try:
-            result = ContractManager().create_contract(
+            result = await ContractManager().create_contract(
                 current_cognito_jwt['sub'],
                 contract_type=user_db['vendor_type'],
                 helpers=data.get('helpers'),

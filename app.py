@@ -3,7 +3,6 @@ from flask_cors import CORS
 from flask_cognito import CognitoAuth
 from flasgger import Swagger
 from controllers import ContractController, MeController, HealthController
-from flask_restful import Api
 from time import strftime
 import logging
 from utilities.types import JSONDict
@@ -33,17 +32,20 @@ cogauth = CognitoAuth(app)
 cogauth.init_app(app)
 CORS(app)
 Swagger(app)
-api = Api(app)
 
 logging.getLogger().setLevel(logging.INFO)
-api.add_resource(ContractController, '/contract')
-api.add_resource(MeController, "/me")
-api.add_resource(HealthController, "/health")
+app.add_url_rule('/contract', view_func=ContractController.as_view('contract'))
+app.add_url_rule('/me', view_func=MeController.as_view('me'))
+app.add_url_rule('/health', view_func=HealthController.as_view('health'))
 
 
 @cogauth.identity_handler
 def lookup_cognito_user(payload: JSONDict) -> str:
-    """Look up user in our database from Cognito JWT payload."""
+    """
+    Look up user in our database from Cognito JWT payload.
+    This function cannot be async.
+    """
+
     assert 'sub' in payload, "Invalid Cognito JWT payload"
     user_id = payload['sub']
 

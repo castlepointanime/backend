@@ -1,7 +1,5 @@
-from flask import Response, abort
+from flask import Response, abort, request
 from http import HTTPStatus
-from flask_restful import Resource
-from flask import request
 from flasgger import validate
 import json
 from typing import Dict, Any, Union
@@ -10,9 +8,9 @@ from jsonschema.exceptions import ValidationError
 import logging
 from flask_cognito import cognito_auth_required, current_cognito_jwt
 from time import strftime
+from flask.views import MethodView
 
-
-class BaseController(Resource):  # type: ignore[no-any-unimported]
+class BaseController(MethodView):
 
     @classmethod
     def log_debug(cls, msg: str) -> None:

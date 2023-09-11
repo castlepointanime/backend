@@ -8,7 +8,7 @@ from utilities import NoApproverException
 
 class ContractManager():
 
-    def create_contract(self,
+    async def create_contract(self,
                         user_id: str,
                         contract_type: str,
                         num_additional_chairs: int,
@@ -22,7 +22,7 @@ class ContractManager():
             raise NotImplementedError()
 
         # Randomly get an approver
-        approver = UsersDB.get_random_artist_reviewer()
+        approver = await UsersDB.get_random_artist_reviewer()
         if approver is None:
             raise NoApproverException()
         # TODO cannot do this to get approver. Need to grab from cognito DB
@@ -48,7 +48,7 @@ class ContractManager():
 
         contract_id = docusign.create_contract(data)
 
-        UsersDB().add_user_contract(user_id, contract_id)
+        await UsersDB().add_user_contract(user_id, contract_id)
         # TODO create task to update the approver's entry so he has a reference of the contract
 
         return {'contractId': contract_id}
