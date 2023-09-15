@@ -12,8 +12,11 @@ from managers import MeManager
 from http import HTTPStatus
 from utilities.types import FlaskResponseType
 import traceback
+from database import CognitoIdentityProviderWrapper
 
 app = Flask(__name__)
+
+print(CognitoIdentityProviderWrapper().get_user("test"))
 
 app.config.update({
     'COGNITO_REGION': COGNITO_REGION,

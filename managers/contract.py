@@ -7,7 +7,7 @@ from utilities import NoApproverException
 
 
 class ContractManager():
-
+    
     def create_contract(self,
                         user_id: str,
                         contract_type: str,

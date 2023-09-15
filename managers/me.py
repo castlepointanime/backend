@@ -17,5 +17,5 @@ class MeManager():
             'database': current_cognito_jwt['database']
         }
 
-    def create_user(self, user_id: str, vendor_type: str) -> bool:
-        return UsersDB.create_user(user_id, vendor_type)
+    def create_user(self, user_id: str, username: str, vendor_type: str) -> bool:
+        return UsersDB.create_user(user_id, username, vendor_type)

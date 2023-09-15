@@ -24,7 +24,7 @@ class MeController(BaseController):
     @swag_from(ME_POST_SCHEMA)
     def post(self) -> FlaskResponseType:
         data = self.get_request_data(self.ME_POST_SCHEMA, "NewUserData")
-        ret = MeManager().create_user(current_cognito_jwt['sub'], data['vendorType'])
+        ret = MeManager().create_user(current_cognito_jwt['sub'], str(current_user), data['vendorType'])
         if not ret:
             return FlaskResponses().bad_request("Failed to make user")
         return FlaskResponses().created_resource(ret)

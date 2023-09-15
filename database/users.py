@@ -10,9 +10,10 @@ import pymongo.results
 class UsersDB(BaseDB):
 
     @classmethod
-    def _new_user(cls, _id: str, vendor_type: str) -> JSONDict:
+    def _new_user(cls, _id: str, username: str, vendor_type: str) -> JSONDict:
         return {
             "_id": _id,
+            "username": username,
             "contracts": [],
             "group": Groups.CUSTOMER,
             "vendor_type": vendor_type,
@@ -25,8 +26,8 @@ class UsersDB(BaseDB):
         return cls.get_collection().find_one(query)
 
     @classmethod
-    def create_user(cls, uuid: str, vendor_type: str) -> bool:
-        query = cls._new_user(uuid, vendor_type)
+    def create_user(cls, uuid: str, username: str, vendor_type: str) -> bool:
+        query = cls._new_user(uuid, username, vendor_type)
         # TODO catch error if user already exists
         ret: pymongo.results.InsertOneResult = cls.get_collection().insert_one(query)
         return ret.acknowledged
