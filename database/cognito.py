@@ -3,17 +3,12 @@
 from botocore.exceptions import ClientError
 import logging
 import boto3
-from config.env import COGNITO_USERPOOL_ID, COGNITO_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN
+from config.env import COGNITO_USERPOOL_ID, COGNITO_REGION
 
 class CognitoIdentityProviderWrapper:
     """Encapsulates Amazon Cognito actions"""
     def __init__(self):
-        self.cognito_idp_client = boto3.client('cognito-idp',
-                                               region_name=COGNITO_REGION,
-                                               aws_access_key_id=AWS_ACCESS_KEY_ID,
-                                               aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-                                               aws_session_token=AWS_SESSION_TOKEN
-                                               )
+        self.cognito_idp_client = boto3.client('cognito-idp')
     
     def get_user(self, username: str):
         """
