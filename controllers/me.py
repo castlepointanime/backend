@@ -1,30 +1,45 @@
-from flask_cognito import cognito_auth_required, current_user, current_cognito_jwt
 from .base_controller import BaseController
-from utilities.types import FlaskResponseType
-from utilities.flask_responses import FlaskResponses
 from managers import MeManager
-from flasgger import swag_from
+from fastapi import Response, status, Depends
+from fastapi_cloudauth.cognito import Cognito
+from fastapi.responses import JSONResponse
+from utilities.auth import get_current_user
+from fastapi_cloudauth.cognito import CognitoClaims
+from pydantic import BaseModel, Field
 
+class PostItem(BaseModel):
+    vendor_type: str = Field(alias="vendorType")
 
 class MeController(BaseController):
 
-    ME_POST_SCHEMA = "swagger/me/post.yaml"
+    def __init__(self, auth: Cognito):
+        super().__init__(auth)
+        self.router.add_api_route("/me", self.get, methods=["GET"])
+        self.router.add_api_route("/me", self.patch, methods=["PATCH"])
+        self.router.add_api_route("/me", self.post, methods=["POST"])
 
-    @cognito_auth_required
-    @swag_from("swagger/me/get.yaml")
-    def get(self) -> FlaskResponseType:
-        result = MeManager().get_user(str(current_user), current_cognito_jwt)
-        return FlaskResponses().success(result)
+    async def get(self, current_user: CognitoClaims = Depends(get_current_user)) -> JSONResponse:
+        result = await MeManager().get_user(current_user)
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content=result
+        )
 
-    @cognito_auth_required
-    def patch(self) -> FlaskResponseType:
-        return FlaskResponses().not_implemented_yet()  # TODO
+    async def patch(self, current_user: CognitoClaims = Depends(get_current_user)) -> JSONResponse:
+        # TODO
+        return JSONResponse(
+            status_code=status.HTTP_501_NOT_IMPLEMENTED,
+            content="Not implemented yet" 
+        )
 
-    @cognito_auth_required
-    @swag_from(ME_POST_SCHEMA)
-    def post(self) -> FlaskResponseType:
-        data = self.get_request_data(self.ME_POST_SCHEMA, "NewUserData")
-        ret = MeManager().create_user(current_cognito_jwt['sub'], data['vendorType'])
+    async def post(self, item: PostItem, current_user: CognitoClaims = Depends(get_current_user)) -> Response:
+        ret = await MeManager().create_user(current_user.sub, item.vendor_type)
         if not ret:
-            return FlaskResponses().bad_request("Failed to make user")
-        return FlaskResponses().created_resource(ret)
+            return JSONResponse(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                content={"error": "Failed to make user"}
+            ) 
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={"contractId": ret}
+        )

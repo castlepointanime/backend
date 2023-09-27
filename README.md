@@ -20,11 +20,9 @@ See [AA-DR Portal README](https://github.com/castlepointanime/portal/blob/main/R
 
 `/utilities` Miscellaneous small python modules
 
-### Flasgger
+### Apidocs
 
-[Flasgger](https://github.com/flasgger/flasgger) is a python module that allows for separate openapi files in multiple places. Flasgger can also can read these files and validate flask requests with the spec. This is added to make validation easier and to constantly keep the api documentation up to date.
-
-To see the apidocs, view `http://localhost:3001/apidocs`
+FastAPI auto-generates API docs. To see the apidocs, view `http://localhost:3001/docs`
 
 ### Mypy/Flake8
 
