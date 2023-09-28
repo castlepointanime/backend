@@ -1,21 +1,24 @@
 from services.docusign import Docusign, ContractData
 from typing import Optional
-from utilities.types import HelperData
+from utilities.types import HelperModel
 from typing import Dict
 from database import UsersDB
 from utilities import NoApproverException
+from typing import List
 
 
 class ContractManager():
 
-    async def create_contract(self,
-                        user_id: str,
-                        contract_type: str,
-                        num_additional_chairs: int,
-                        artist_phone_number: int,
-                        signer_name: str,
-                        signer_email: str,
-                        helpers: Optional[HelperData]) -> Dict[str, str]:
+    async def create_contract(
+        self,
+        user_id: str,
+        contract_type: str,
+        num_additional_chairs: int,
+        artist_phone_number: int,
+        signer_name: str,
+        signer_email: str,
+        helpers: Optional[List[HelperModel]]
+    ) -> Dict[str, str]:
 
         # TODO need to discuss spec for dealer contract
         if contract_type == "dealer":

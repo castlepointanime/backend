@@ -1,7 +1,9 @@
 {
     "contract_limits": {
         "max_additional_chairs": 2,
-        "max_helpers": 3
+        "max_helpers": 3,
+        "phone_number_max": 10000000000,
+        "phone_number_min": 99999999999
     },
     "docusign": {
         "authorization_server": "account-d.docusign.com"

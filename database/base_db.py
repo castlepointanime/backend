@@ -28,7 +28,6 @@ class BaseDB:
     def get_database(cls) -> AsyncIOMotorDatabase:  # type: ignore[no-any-unimported]
         return cls._get_client()[MONGO_DB_NAME]
 
-
     # TODO this needs to be reworked
     @classmethod
     async def get_random(cls, collection: AsyncIOMotorCollection, count: int, query: JSONDict) -> List[MongoMappingType]:  # type: ignore[no-any-unimported]
@@ -38,7 +37,7 @@ class BaseDB:
             {"$match": query},
             {"$sample": {"size": count}}
             ]
-        it = await collection.aggregate(aggregate_query)
-        for doc in it:
+        it = collection.aggregate(aggregate_query)
+        async for doc in it:
             results.append(doc)
         return results

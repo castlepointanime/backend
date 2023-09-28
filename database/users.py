@@ -6,6 +6,7 @@ import pymongo.results
 from .base_db import BaseDB
 from motor.motor_asyncio import AsyncIOMotorCollection
 
+
 class UsersDB(BaseDB):
 
     @classmethod
@@ -21,7 +22,8 @@ class UsersDB(BaseDB):
     @classmethod
     async def get_user(cls, uuid: str) -> Optional[MongoMappingType]:
         query = {"_id": uuid}
-        return await cls.get_collection().find_one(query)
+        result: Optional[MongoMappingType] = await cls.get_collection().find_one(query)
+        return result
 
     @classmethod
     async def create_user(cls, uuid: str, vendor_type: str) -> bool:
@@ -36,11 +38,12 @@ class UsersDB(BaseDB):
 
     @classmethod
     async def add_user_contract(cls, uuid: str, contract_id: str) -> pymongo.results.UpdateResult:
-        return await cls.get_collection().update_one(
+        result: pymongo.results.UpdateResult = await cls.get_collection().update_one(
             {"_id": uuid},
             {"$addToSet": {"contracts": contract_id}}
         )
-        
+        return result
+
     # TODO this needs to be reworked
     @classmethod
     async def _get_random_reviewer(cls, role: str) -> Optional[MongoMappingType]:
