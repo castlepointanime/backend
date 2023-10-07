@@ -1,28 +1,31 @@
 from services.docusign import Docusign, ContractData
 from typing import Optional
-from utilities.types import HelperData
+from utilities.types import HelperModel
 from typing import Dict
 from database import UsersDB
 from utilities import NoApproverException
+from typing import List
 
 
 class ContractManager():
 
-    def create_contract(self,
-                        user_id: str,
-                        contract_type: str,
-                        num_additional_chairs: int,
-                        artist_phone_number: int,
-                        signer_name: str,
-                        signer_email: str,
-                        helpers: Optional[HelperData]) -> Dict[str, str]:
+    async def create_contract(
+        self,
+        user_id: str,
+        contract_type: str,
+        num_additional_chairs: int,
+        artist_phone_number: int,
+        signer_name: str,
+        signer_email: str,
+        helpers: Optional[List[HelperModel]]
+    ) -> Dict[str, str]:
 
         # TODO need to discuss spec for dealer contract
         if contract_type == "dealer":
             raise NotImplementedError()
 
         # Randomly get an approver
-        approver = UsersDB.get_random_artist_reviewer()
+        approver = await UsersDB.get_random_artist_reviewer()
         if approver is None:
             raise NoApproverException()
         # TODO cannot do this to get approver. Need to grab from cognito DB
@@ -48,7 +51,7 @@ class ContractManager():
 
         contract_id = docusign.create_contract(data)
 
-        UsersDB().add_user_contract(user_id, contract_id)
+        await UsersDB().add_user_contract(user_id, contract_id)
         # TODO create task to update the approver's entry so he has a reference of the contract
 
         return {'contractId': contract_id}
