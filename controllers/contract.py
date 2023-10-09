@@ -34,7 +34,7 @@ class ContractController(BaseController):
         self.router.add_api_route("/contract", self.post, methods=["POST"], response_model=PostResponseItem)
 
     async def post(self, item: PostItem, current_user: CognitoClaims = Depends(get_current_user)) -> Response:  # type: ignore[no-any-unimported]
-        db = await UsersDB.get_user(current_user)
+        db = await UsersDB.get_user(current_user.sub)
         if not db:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,

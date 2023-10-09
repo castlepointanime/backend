@@ -52,7 +52,7 @@ class MeController(BaseController):
         self.router.add_api_route("/me", self.post, methods=["POST"], response_model=PostResponseItem)
 
     async def get(self, current_user: CognitoClaims = Depends(get_current_user)) -> Response:  # type: ignore[no-any-unimported]
-        result = await UsersDB.get_user(current_user)
+        result = await UsersDB.get_user(current_user.sub)
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
