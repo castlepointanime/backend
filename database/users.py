@@ -1,10 +1,10 @@
-from motor.motor_asyncio import AsyncIOMotorCollection
-from .base_db import BaseDB
 from typing import Optional
 from utilities.types import JSONDict, MongoMappingType
 import pymongo
 from utilities.rbac import Roles, Groups
 import pymongo.results
+from .base_db import BaseDB
+from motor.motor_asyncio import AsyncIOMotorCollection
 
 
 class UsersDB(BaseDB):
@@ -21,34 +21,33 @@ class UsersDB(BaseDB):
         }
 
     @classmethod
-    def get_user(cls, uuid: str) -> Optional[MongoMappingType]:
+    async def get_user(cls, uuid: str) -> Optional[MongoMappingType]:
         query = {"_id": uuid}
-        return cls.get_collection().find_one(query)
+        result: Optional[MongoMappingType] = await cls.get_collection().find_one(query)
+        return result
 
     @classmethod
-    def create_user(cls, uuid: str, username: str, vendor_type: str) -> bool:
+    async def create_user(cls, uuid: str, username: str, vendor_type: str) -> bool:
         query = cls._new_user(uuid, username, vendor_type)
         # TODO catch error if user already exists
-        ret: pymongo.results.InsertOneResult = cls.get_collection().insert_one(query)
+        ret: pymongo.results.InsertOneResult = await cls.get_collection().insert_one(query)
         return ret.acknowledged
 
     @classmethod
-    def get_collection(cls) -> pymongo.collection.Collection[MongoMappingType]:
+    def get_collection(cls) -> AsyncIOMotorCollection:  # type: ignore[no-any-unimported]
         return super().get_database()['users']
 
     @classmethod
-    def get_collection_async(cls) -> AsyncIOMotorCollection:  # type: ignore[no-any-unimported]
-        return super().get_database_async()['users']
-
-    @classmethod
-    def add_user_contract(cls, uuid: str, contract_id: str) -> pymongo.results.UpdateResult:
-        return cls.get_collection().update_one(
+    async def add_user_contract(cls, uuid: str, contract_id: str) -> pymongo.results.UpdateResult:
+        result: pymongo.results.UpdateResult = await cls.get_collection().update_one(
             {"_id": uuid},
             {"$addToSet": {"contracts": contract_id}}
         )
+        return result
 
+    # TODO this needs to be reworked
     @classmethod
-    def _get_random_reviewer(cls, role: str) -> Optional[MongoMappingType]:
+    async def _get_random_reviewer(cls, role: str) -> Optional[MongoMappingType]:
         query = {
             "$and": [
                 {
@@ -63,16 +62,16 @@ class UsersDB(BaseDB):
                 }
             ]
         }
-        results = cls.get_random(cls.get_collection(), 1, query)
+        results = await cls.get_random(cls.get_collection(), 1, query)
         if len(results) == 0:
             return None
         assert len(results) == 1
         return results[0]
 
     @classmethod
-    def get_random_artist_reviewer(cls) -> Optional[MongoMappingType]:
-        return cls._get_random_reviewer(Roles.ARTIST_REVIEWER)
+    async def get_random_artist_reviewer(cls) -> Optional[MongoMappingType]:
+        return await cls._get_random_reviewer(Roles.ARTIST_REVIEWER)
 
     @classmethod
-    def get_random_dealer_reviewer(cls) -> Optional[MongoMappingType]:
-        return cls._get_random_reviewer(Roles.DEALER_REVIEWER)
+    async def get_random_dealer_reviewer(cls) -> Optional[MongoMappingType]:
+        return await cls._get_random_reviewer(Roles.DEALER_REVIEWER)

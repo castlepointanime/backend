@@ -1,6 +1,6 @@
 from docusign_esign import EnvelopeDefinition, TemplateRole, Tabs, Text, Number
 from config.env import CONTRACT_TEMPLATE_ID
-from utilities.types import HelperData
+from utilities.types import HelperModel
 from dataclasses import dataclass
 import datetime
 from typing import Dict, List, Optional
@@ -13,7 +13,7 @@ class ContractData:
 
     num_additional_chairs: int
     artist_phone_number: int
-    helpers: Optional[HelperData]
+    helpers: Optional[List[HelperModel]]
     signer_name: str
     signer_email: str
     approver_name: str
@@ -47,9 +47,8 @@ class ContractData:
             assert len(self.helpers) <= max_helpers, "Invalid Helper Data"
 
             for helper_num in range(0, len(self.helpers)):
-                assert type(self.helpers[helper_num]) == dict, "Invalid Helper Data"
-                text_envelope_args.append(Text(tab_label=f"helper{helper_num}_name", value=self.helpers[helper_num]['name']))
-                number_envelope_args.append(Number(tab_label=f"helper{helper_num}_phone_number", value=self.helpers[helper_num]['phoneNumber']))
+                text_envelope_args.append(Text(tab_label=f"helper{helper_num}_name", value=self.helpers[helper_num].name))
+                number_envelope_args.append(Number(tab_label=f"helper{helper_num}_phone_number", value=self.helpers[helper_num].phone_number))
 
         # Generate date for contract
         current_date = datetime.datetime.now()

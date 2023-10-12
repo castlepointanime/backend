@@ -1,36 +1,63 @@
-from flask_cognito import cognito_auth_required, current_cognito_jwt, current_user
 from managers import ContractManager
-from flasgger import swag_from
 from .base_controller import BaseController
-from utilities.types import FlaskResponseType
-from utilities import FlaskResponses, NoApproverException
-from .swagger.contract.post import contract_post_schema
-from utilities.types import JSONDict
+from utilities import NoApproverException
+from utilities.types import HelperModel
 from typing import Optional
+from fastapi_cloudauth.cognito import Cognito
+from fastapi_cloudauth.cognito import CognitoClaims
+from utilities.auth import get_current_user
+from fastapi import status, Depends, Response, HTTPException
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
+from utilities.types.fields import phone_number
+from config import Config
+from typing import List
+from database.users import UsersDB
+
+config = Config()
+
+
+class PostItem(BaseModel):
+    artist_phone_number: int = phone_number("artistPhoneNumber")
+    helpers: Optional[List[HelperModel]] = Field(alias="helpers", min_length=1, max_length=config.get_contract_limit("max_helpers"))
+    num_additional_chairs: int = Field(alias="numAdditionalChairs", le=config.get_contract_limit("max_additional_chairs"), ge=0, examples=['2'])
+
+
+class PostResponseItem(BaseModel):
+    contractId: int = 0
 
 
 class ContractController(BaseController):
 
-    @cognito_auth_required
-    @swag_from(contract_post_schema)
-    def post(self) -> FlaskResponseType:
-        data = self.get_request_data(contract_post_schema, "ContractData")
+    def __init__(self, auth: Cognito):  # type: ignore[no-any-unimported]
+        super().__init__(auth)
+        self.router.add_api_route("/contract", self.post, methods=["POST"], response_model=PostResponseItem)
 
-        user_db: Optional[JSONDict] = current_cognito_jwt['database']
-        if user_db is None:
-            return FlaskResponses.bad_request("User needs to make an account")
+    async def post(self, item: PostItem, current_user: CognitoClaims = Depends(get_current_user)) -> Response:  # type: ignore[no-any-unimported]
+        db = await UsersDB.get_user(current_user.sub)
+        if not db:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail='User needs to make an account'
+            )
 
         try:
-            result = ContractManager().create_contract(
-                current_cognito_jwt['sub'],
-                contract_type=user_db['vendor_type'],
-                helpers=data.get('helpers'),
-                num_additional_chairs=data['numAdditionalChairs'],
-                signer_email=current_cognito_jwt['email'],  # TODO assert that emails are verified
-                signer_name=str(current_user),
-                artist_phone_number=data['artistPhoneNumber']
+            result = await ContractManager().create_contract(
+                current_user.sub,
+                contract_type=str(db.get("vendor_type")),
+                helpers=item.helpers,
+                num_additional_chairs=item.num_additional_chairs,
+                signer_email=current_user.email,  # TODO assert that emails are verified
+                signer_name=current_user.username,  # TODO signer_name should be the user's name, not username
+                artist_phone_number=item.artist_phone_number  # TODO this should be stored in AWS
                 )
         except NoApproverException:
-            return FlaskResponses.conflict("Cannot make contract since there is nobody to approve the contract.")
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail='Cannot make contract since there is nobody to approve the contract'
+            )
 
-        return FlaskResponses.success(result)
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content=result
+        )

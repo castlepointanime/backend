@@ -2,7 +2,7 @@ from typing import List
 
 
 class Roles:
-    CAN_MODIFY_CUSTOMER = "CanEditCustomerRoles"
+    CAN_MODIFY_CUSTOMER = "CanEditCustomer"
     CAN_MODIFY_DEVELOPER = "CanEditDeveloper"
     CAN_MODIFY_STAFF = "CanModifyStaff"
 
