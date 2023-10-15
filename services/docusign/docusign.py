@@ -61,7 +61,7 @@ class Docusign:
                 return callback(api_client, private_key, contract_data)
 
         logging.error(body)
-        sys.exit("Failed to grant consent")  # TODO can this sys.exit be removed?
+        raise Exception("Consent could not be aquired")
 
     @classmethod
     def _run(cls, api_client: ApiClient, private_key: str, contract_data: ContractData) -> str:  # type: ignore[no-any-unimported]

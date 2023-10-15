@@ -56,6 +56,11 @@ class ContractController(BaseController):
                 status_code=status.HTTP_409_CONFLICT,
                 detail='Cannot make contract since there is nobody to approve the contract'
             )
+        except NotImplementedError:
+            raise HTTPException(
+                status_code=status.HTTP_501_NOT_IMPLEMENTED,
+                detail='Unable to create contract of specified type'
+            )
 
         return JSONResponse(
             status_code=status.HTTP_200_OK,

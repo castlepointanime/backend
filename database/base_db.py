@@ -1,6 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase, AsyncIOMotorCollection
 from config.env import MONGO_URI, MONGO_DB_NAME
-import logging
 from typing import Optional, List
 from utilities.types import MongoMappingType, JSONDict
 
@@ -18,11 +17,7 @@ class BaseDB:
 
     @classmethod
     def _verify_connection(cls, client: AsyncIOMotorClient) -> None:  # type: ignore[no-any-unimported]
-        try:
-            client.server_info()
-        except Exception as e:
-            logging.critical("Cannot connect to db.")
-            raise e
+        client.server_info()
 
     @classmethod
     def get_database(cls) -> AsyncIOMotorDatabase:  # type: ignore[no-any-unimported]

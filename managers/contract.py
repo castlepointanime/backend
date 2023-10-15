@@ -34,8 +34,8 @@ class ContractManager():
         approver_email = "test@gmail.com"
         approver_name = "test"
 
-        assert type(approver_email) == str
-        assert type(approver_name) == str
+        assert type(approver_email) is str, "Expected a string for approver email"
+        assert type(approver_name) is str, "Expected a string for approver name"
 
         data = ContractData(
             num_additional_chairs=num_additional_chairs,
