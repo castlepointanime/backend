@@ -75,8 +75,8 @@ class MeController(BaseController):
             ret: bool = await MeManager().create_user(current_user.sub, str(item.vendor_type))
         except DuplicateKeyError:
             raise HTTPException(
-                    status_code=status.HTTP_409_CONFLICT,
-                    detail="Specified user already exists"
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Specified user already exists"
             )
         if not ret:
             raise HTTPException(
