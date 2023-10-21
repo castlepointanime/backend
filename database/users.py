@@ -64,7 +64,7 @@ class UsersDB(BaseDB):
         results = await cls.get_random(cls.get_collection(), 1, query)
         if len(results) == 0:
             return None
-        assert len(results) == 1
+        assert len(results) == 1, "Recieved too many results"
         return results[0]
 
     @classmethod

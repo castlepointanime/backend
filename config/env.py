@@ -7,7 +7,7 @@ load_dotenv('../backend.env')
 
 def load_env(input: str) -> str:
     data = os.getenv(input)
-    assert type(data) == str and len(data) > 0, f"Invalid or no '{input}' environment variable."
+    assert type(data) is str and len(data) > 0, f"Invalid or no '{input}' environment variable."
     return data
 
 

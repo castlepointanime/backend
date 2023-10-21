@@ -11,6 +11,7 @@ from typing import List
 from typing_extensions import TypedDict
 import uuid
 from database.users import UsersDB
+from pymongo.errors import DuplicateKeyError
 
 
 class PostItem(BaseModel):
@@ -70,7 +71,13 @@ class MeController(BaseController):
         )
 
     async def post(self, item: PostItem, current_user: CognitoClaims = Depends(get_current_user)) -> Response:  # type: ignore[no-any-unimported]
-        ret: bool = await MeManager().create_user(current_user.sub, str(item.vendor_type))
+        try:
+            ret: bool = await MeManager().create_user(current_user.sub, str(item.vendor_type))
+        except DuplicateKeyError:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Specified user already exists"
+            )
         if not ret:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,

@@ -1,4 +1,3 @@
-import sys
 from .envelope import Contract
 from services.docusign import ContractData
 from docusign_esign import ApiClient
@@ -61,7 +60,7 @@ class Docusign:
                 return callback(api_client, private_key, contract_data)
 
         logging.error(body)
-        sys.exit("Failed to grant consent")  # TODO can this sys.exit be removed?
+        raise Exception("Consent could not be aquired")
 
     @classmethod
     def _run(cls, api_client: ApiClient, private_key: str, contract_data: ContractData) -> str:  # type: ignore[no-any-unimported]
@@ -74,11 +73,11 @@ class Docusign:
 
         envelope_data: Dict[str, str] = Contract(access_token, base_path, account_id).make_contract(contract_data)
 
-        assert type(envelope_data) == dict, f"Invalid envelope response: {envelope_data}"
+        assert type(envelope_data) is dict, f"Invalid envelope response: {envelope_data}"
         assert "envelope_id" in envelope_data, f"Envelope does not contain ID: {envelope_data}"
 
         envelope_id: Optional[str] = envelope_data["envelope_id"]
-        assert type(envelope_id) == str, f"Invalid envelope id {envelope_id} of type {type(envelope_id)}"
+        assert type(envelope_id) is str, f"Invalid envelope id {envelope_id} of type {type(envelope_id)}"
 
         return envelope_id
 
