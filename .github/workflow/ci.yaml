@@ -1,0 +1,15 @@
+name: Main workflow
+
+on:
+  pull_request:
+  push:
+
+jobs:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+
+    steps:
+      - name: make check
+        run: |
+          pip install -r requirements.txt
+          make check
