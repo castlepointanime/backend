@@ -29,7 +29,6 @@ class UsersDB(BaseDB):
     @classmethod
     async def create_user(cls, uuid: str, username: str, vendor_type: str) -> bool:
         query = cls._new_user(uuid, username, vendor_type)
-        # TODO catch error if user already exists
         ret: pymongo.results.InsertOneResult = await cls.get_collection().insert_one(query)
         return ret.acknowledged
 
