@@ -10,7 +10,6 @@ from fastapi_cloudauth.cognito import Cognito
 from starlette.middleware.base import _StreamingResponse
 from typing import Awaitable, Callable
 
-
 app = FastAPI()
 auth = Cognito(
     region=COGNITO_REGION,

@@ -16,11 +16,12 @@ services:
       - ../../backend.env
     volumes:
       - ../../:/portal
-      - ~/.aws:/.aws
+      - ~/.aws:/root/.aws
       - /var/run/docker.sock:/var/run/docker.sock
       - ~/.gitconfig:/.gitconfig
     command: /bin/sh -c "while sleep 1000; do :; done"
     network_mode: host
     environment:
-      AWS_SHARED_CREDENTIALS_FILE: /.aws/credentials
-      AWS_CONFIG_FILE: /.aws/config
+      AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
+      AWS_CONFIG_FILE: /root/.aws/config
+      AWS_PROFILE: cpac-webmaster

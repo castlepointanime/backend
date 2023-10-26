@@ -48,7 +48,7 @@ class ContractController(BaseController):
                 helpers=item.helpers,
                 num_additional_chairs=item.num_additional_chairs,
                 signer_email=current_user.email,  # TODO assert that emails are verified
-                signer_name=current_user.username,
+                signer_name=current_user.username,  # TODO signer_name should be the user's name, not username
                 artist_phone_number=item.artist_phone_number  # TODO this should be stored in AWS
                 )
         except NoApproverException:

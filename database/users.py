@@ -10,9 +10,10 @@ from motor.motor_asyncio import AsyncIOMotorCollection
 class UsersDB(BaseDB):
 
     @classmethod
-    def _new_user(cls, _id: str, vendor_type: str) -> JSONDict:
+    def _new_user(cls, _id: str, username: str, vendor_type: str) -> JSONDict:
         return {
             "_id": _id,
+            "username": username,
             "contracts": [],
             "group": Groups.CUSTOMER,
             "vendor_type": vendor_type,
@@ -26,9 +27,8 @@ class UsersDB(BaseDB):
         return result
 
     @classmethod
-    async def create_user(cls, uuid: str, vendor_type: str) -> bool:
-        query = cls._new_user(uuid, vendor_type)
-        # TODO catch error if user already exists
+    async def create_user(cls, uuid: str, username: str, vendor_type: str) -> bool:
+        query = cls._new_user(uuid, username, vendor_type)
         ret: pymongo.results.InsertOneResult = await cls.get_collection().insert_one(query)
         return ret.acknowledged
 

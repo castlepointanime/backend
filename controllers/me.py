@@ -72,7 +72,7 @@ class MeController(BaseController):
 
     async def post(self, item: PostItem, current_user: CognitoClaims = Depends(get_current_user)) -> Response:  # type: ignore[no-any-unimported]
         try:
-            ret: bool = await MeManager().create_user(current_user.sub, str(item.vendor_type))
+            ret: bool = await MeManager().create_user(current_user.sub, current_user.username, str(item.vendor_type))
         except DuplicateKeyError:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,

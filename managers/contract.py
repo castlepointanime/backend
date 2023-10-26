@@ -5,6 +5,7 @@ from typing import Dict
 from database import UsersDB
 from utilities import NoApproverException
 from typing import List
+from database import CognitoIdentityProviderWrapper
 
 
 class ContractManager():
@@ -28,11 +29,14 @@ class ContractManager():
         approver = await UsersDB.get_random_artist_reviewer()
         if approver is None:
             raise NoApproverException()
-        # TODO cannot do this to get approver. Need to grab from cognito DB
-        # approver_email = approver.get("email")
-        # approver_name = approver.get('name')
-        approver_email = "test@gmail.com"
-        approver_name = "test"
+
+        # Get the email and username from CognitoDB
+        assert "username" in approver
+        approver_name = approver["username"]
+        approver_cognito_data = CognitoIdentityProviderWrapper().get_user(approver_name)
+        approver_email = approver_cognito_data.email
+
+        # TODO the approver_name should be the user's name, not username
 
         assert type(approver_email) is str, "Expected a string for approver email"
         assert type(approver_name) is str, "Expected a string for approver name"
