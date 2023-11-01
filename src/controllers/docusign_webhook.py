@@ -27,13 +27,10 @@ class DocusignWebhookController(BaseController):
         super().__init__(auth)
         self.router.add_api_route("/docusign/webhook", self.post, methods=["POST"], response_model=None)
 
-    def post(self, key: str, item: PostItem) -> Response:
+    def post(self, item: PostItem) -> Response:
         mgr = DocusignWebhookManager()
-        if not mgr.is_webhook_key(key):
-            return JSONResponse(
-                status_code=status.HTTP_403_FORBIDDEN,
-                content=None
-                )
+
+        # TODO Include Docusign HMAC Signature and OAUTH
 
         if item.api_version != DOCUSIGN_API_VERSION:
             logging.warn(f"Webhook API Version doesn't match. Current: {item.api_version}, Expected: {DOCUSIGN_API_VERSION}")

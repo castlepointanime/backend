@@ -1,13 +1,9 @@
-from config.env import DOCUSIGN_QUERY_PARAM_KEY
 from utilities.types.fields import DocusignWebhookEventEnum
 from datetime import datetime
 from typing import Dict, Any
 
 
 class DocusignWebhookManager():
-
-    def is_webhook_key(self, key: str) -> bool:
-        return key == DOCUSIGN_QUERY_PARAM_KEY
 
     def handle_webhook_event(self, event: DocusignWebhookEventEnum, retry_count: int, generated_date_time: datetime, data: Dict[str, Any]) -> None:
         match event:

@@ -9,9 +9,7 @@ event_folder_name = sys.argv[2]
 event_directory = f"../../docs/docusign-events/{event_folder_name}"
 events = sorted(os.listdir(event_directory))
 
-key = os.environ.get('WEBHOOK_QUERY_PARAM_KEY')
-
-url = f"{server_ip}/docusign/webhook?key={key}"
+url = f"{server_ip}/docusign/webhook"
 
 headers = {
     'Content-Type': 'application/json',
