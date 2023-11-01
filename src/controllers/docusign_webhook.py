@@ -14,7 +14,7 @@ from config.env import DOCUSIGN_API_VERSION
 class PostItem(BaseModel):
     event: DocusignWebhookEventEnum
     api_version: str = Field(alias="apiVersion", examples=['v2.1'])
-    url: str = Field(examples=["/restapi/v2.1/accounts/6f7fcdd0-bc7f-484b-8a15-ed3af04c16ff/envelopes/29e66716-238b-459e-a29d-5371be2bef80"])
+    uri: str = Field(examples=["/restapi/v2.1/accounts/6f7fcdd0-bc7f-484b-8a15-ed3af04c16ff/envelopes/29e66716-238b-459e-a29d-5371be2bef80"])
     retry_count: int = Field(alias="retryCount", examples=[0])
     configuration_id: int = Field(alias="configurationId", examples=[10352224])
     generated_date_time: datetime = Field(alias="generatedDateTime", examples=["2023-11-01T03:20:28.1366172Z"])
