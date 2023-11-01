@@ -16,3 +16,28 @@ def phone_number(alias: str) -> int:
 class VendorTypeEnum(Enum):
     artist = 'artist'
     dealer = 'dealer'
+
+
+class DocusignWebhookEventEnum(Enum):
+    envelope_created = 'envelope-created'
+    envelope_sent = 'envelope-sent'
+    envelope_delivered = 'envelope-delivered'
+    envelope_completed = 'envelope-completed'
+    envelope_purge = 'envelope-purge'
+    envelope_resent = 'envelope-resent'
+    envelope_corrected = 'envelope-corrected'
+    envelope_discard = 'envelope-discard'
+    envelope_voided = 'envelope-voided'
+    envelope_deleted = 'envelope-deleted'
+    envelope_declined = 'envelope-declined'
+
+    recipient_sent = 'recipient-sent'
+    recipient_auto_responded = 'recipient-auto-responded'
+    recipient_delivered = 'recipient-delivered'
+    recipient_completed = 'recipient-completed'
+    recipient_declined = 'recipient-declined'
+    recipient_authentication_failure = 'recipient-authentication-failure'
+    recipient_resent = 'recipient-resent'
+    recipient_reassign = 'recipient-reassign'
+    recipient_finish_later = 'recipient-finish-later'
+    recipient_delegate = 'recipient-delegate'

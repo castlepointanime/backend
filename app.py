@@ -1,4 +1,4 @@
-from controllers import ContractController, MeController, HealthController
+from controllers import ContractController, MeController, HealthController, DocusignWebhookController
 from fastapi import FastAPI, Request, Response, status
 from fastapi.responses import JSONResponse
 from time import strftime
@@ -22,6 +22,7 @@ logging.getLogger().setLevel(logging.INFO)
 app.include_router(ContractController(auth).router)
 app.include_router(MeController(auth).router)
 app.include_router(HealthController(auth).router)
+app.include_router(DocusignWebhookController(auth).router)
 
 
 @app.middleware("http")
@@ -29,6 +30,7 @@ async def after_request(request: Request, call_next: Callable[..., Awaitable[_St
     response: Response = await call_next(request)
     timestamp = strftime('[%Y-%b-%d %H:%M]')  # TODO this is defined in multiple spots. Make robust
     assert request.client, "Missing header data in request. No client information."
+    # TODO hide "key" query params
     logging.info('%s %s %s %s %s %s', timestamp, request.client.host, request.method, request.scope['type'], request.url, response.status_code)
     return response
 
